@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, HTTPException
 from app.services.movie_service import search_movies
 from typing import List, Optional
 from app.models.movie import Movie
@@ -14,4 +14,11 @@ async def read_movies(
     director: Optional[str] = Query(None, description="Director to search for"),
     cast_member: Optional[str] = Query(None, description="Cast member to search for"),
 ):
+    # At least one parameter must be provided
+    if all(param is None for param in [title, genres, year, director, cast_member]):
+        raise HTTPException(
+            status_code=400, detail="At least one filter must be provided"
+        )
+
+    # Proceed with the search if at least one parameter is provided
     return await search_movies(title, genres, year, director, cast_member)
