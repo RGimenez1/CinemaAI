@@ -1,15 +1,25 @@
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from app.api.routes import router as movie_router
+from app.api.movies import router as movie_router
+from app.api.chat import router as chat_router
 from pydantic import BaseModel, ValidationError
 import logging
+from fastapi.middleware.cors import CORSMiddleware
 
 # Initialize the FastAPI application
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Include the movie router
 app.include_router(movie_router, prefix="/api")
+app.include_router(chat_router, prefix="/api")
 
 # Set up logging configuration
 logging.basicConfig(

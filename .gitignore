@@ -8,6 +8,7 @@ __pycache__/
 
 #vscode
 .vscode/
+/page.html
 
 # Distribution / packaging
 .Python
