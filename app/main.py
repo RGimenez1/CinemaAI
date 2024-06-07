@@ -1,6 +1,8 @@
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from app.api.movies import router as movie_router
 from app.api.chat import router as chat_router
 from pydantic import BaseModel, ValidationError
@@ -17,9 +19,15 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-# Include the movie router
+# Include the movie and chat routers
 app.include_router(movie_router, prefix="/api")
 app.include_router(chat_router, prefix="/api")
+
+# Mount the static files directory to serve static files like CSS, JS, images, etc.
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+# Setup the templates directory
+templates = Jinja2Templates(directory="app/templates")
 
 # Set up logging configuration
 logging.basicConfig(
@@ -62,7 +70,7 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
     )
 
 
-# Example endpoint to test error handling (remove or replace in production)
-# @app.get("/cause-error")
-# async def cause_error():
-#     raise HTTPException(status_code=400, detail="This is a bad request error")
+# Endpoint to serve the home page
+@app.get("/")
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})

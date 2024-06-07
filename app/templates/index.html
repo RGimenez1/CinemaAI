@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Streaming</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #chat-output {
+            white-space: pre-wrap;
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        #chat-input {
+            width: 300px;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        #logo {
+            width: 100px;  /* Adjust the width as needed */
+            height: auto;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat with Streaming Response</h1>
+    <!-- <img id="logo" src="/static/cinemaAI_logo.svg" alt="CinemaAI Logo"> -->
+    <input type="text" id="chat-input" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+    <div id="chat-output"></div>
+
+    <script>
+        async function sendMessage() {
+            const messageInput = document.getElementById('chat-input');
+            const message = messageInput.value;
+            const chatOutput = document.getElementById('chat-output');
+
+            if (!message) {
+                alert("Please enter a message.");
+                return;
+            }
+
+            // Clear the output area
+            chatOutput.textContent = '';
+
+            try {
+                // Fetch the streaming response
+                const response = await fetch(`http://127.0.0.1:8000/api/chat?message=${encodeURIComponent(message)}`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.body) {
+                    chatOutput.textContent = 'No response body available.';
+                    return;
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let done = false;
+
+                while (!done) {
+                    const { value, done: doneReading } = await reader.read();
+                    done = doneReading;
+                    const chunk = decoder.decode(value, { stream: true });
+                    chatOutput.textContent += chunk;
+                    chatOutput.scrollTop = chatOutput.scrollHeight; // Scroll to bottom
+                }
+            } catch (error) {
+                chatOutput.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
