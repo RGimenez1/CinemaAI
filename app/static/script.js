@@ -4,26 +4,40 @@ window.onload = function () {
   functionsEditor.setTheme('ace/theme/github');
   functionsEditor.session.setMode('ace/mode/json');
   functionsEditor.setOptions({
-    maxLines: 10,
+    maxLines: 20, // Increase the maximum number of lines to show by default
     autoScrollEditorIntoView: true,
+    wrap: true, // Enable wrapping to prevent horizontal scrolling
+    minLines: 15, // Ensure the editor shows at least this many lines initially
   });
 
-  // Function to add function JSON
+  // Event listener to add function JSON
   document
     .getElementById('add-function')
     .addEventListener('click', function () {
       const jsonValue = functionsEditor.getValue();
       if (jsonValue) {
         console.log('Function added:', jsonValue);
-        // Add your logic to handle the added function JSON here
+        // TODO: Add logic to handle the added function JSON here
       }
     });
+
+  // Handle keypress events in the chat message input
+  const messageInput = document.getElementById('chat-message');
+  messageInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      // Prevent the default action (new line)
+      event.preventDefault();
+      // Send the message
+      sendMessage();
+    }
+  });
 };
 
 async function sendMessage() {
   const messageInput = document.getElementById('chat-message');
   const message = messageInput.value;
   const chatOutput = document.getElementById('chat-messages');
+  const loader = document.getElementById('loader');
 
   if (!message) {
     alert('Please enter a message.');
@@ -40,10 +54,9 @@ async function sendMessage() {
   chatOutput.appendChild(userMessageElement);
 
   // Show loader
-  document.getElementById('loader').style.display = 'block';
+  loader.style.display = 'block';
 
   try {
-    // Fetch the streaming response
     const response = await fetch(
       `http://127.0.0.1:8000/api/chat?message=${encodeURIComponent(message)}`,
       {
@@ -57,13 +70,7 @@ async function sendMessage() {
 
     // Hide loader if no response body
     if (!response.body) {
-      document.getElementById('loader').style.display = 'none';
-      const errorElement = document.createElement('div');
-      errorElement.classList.add('error-message');
-      errorElement.innerHTML =
-        '<strong>Error:</strong> No response body available.';
-      chatOutput.appendChild(errorElement);
-      return;
+      throw new Error('No response body available.');
     }
 
     const reader = response.body.getReader();
@@ -76,6 +83,7 @@ async function sendMessage() {
     aiMessageElement.textContent = 'AI: ';
     chatOutput.appendChild(aiMessageElement);
 
+    // Read the response stream
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
@@ -92,6 +100,6 @@ async function sendMessage() {
     chatOutput.appendChild(errorElement);
   } finally {
     // Hide loader when the process is complete
-    document.getElementById('loader').style.display = 'none';
+    loader.style.display = 'none';
   }
 }

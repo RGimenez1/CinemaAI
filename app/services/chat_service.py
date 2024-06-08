@@ -2,7 +2,7 @@ from pyexpat import model
 import openai
 from app.core.config import settings
 
-# Set up the OpenAI API key
+
 openai.api_key = settings.OPENAI_API_KEY
 
 
@@ -23,7 +23,6 @@ class CinemaAIChat:
         Streams the response from OpenAI's chat model.
         """
         try:
-            # Initiate the API call for chat completion with streaming
             response = openai.chat.completions.create(
                 model=self.model,
                 messages=[
@@ -31,7 +30,7 @@ class CinemaAIChat:
                     {"role": "user", "content": user_message},
                 ],
                 max_tokens=150,
-                stream=True,  # Enable streaming
+                stream=True,
             )
 
             # Stream the response chunks

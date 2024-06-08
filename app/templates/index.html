@@ -9,46 +9,45 @@
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
+        <aside class="sidebar">
             <header>
                 <img src="/static/cinemaAI_logo.webp" alt="CinemaAI Logo" class="logo">
                 <h1>CinemaAI Playground</h1>
             </header>
             <section>
                 <h2>System Instructions</h2>
-                <textarea id="system-prompt" placeholder="Enter your system prompt here..."></textarea>
+                <textarea id="system-prompt" placeholder="Enter your system prompt here..." aria-label="System Instructions"></textarea>
             </section>
             <section>
                 <h2>Model Configuration</h2>
-                <select id="model-selection">
+                <label for="model-selection">Select Model:</label>
+                <select id="model-selection" aria-label="Model Configuration">
                     <option value="gpt-4o">gpt-4o</option>
                     <!-- Add more models as needed -->
                 </select>
             </section>
             <section>
                 <h2>Functions</h2>
-                <div id="functions-editor" style="height: 200px; width: 100%;"></div>
-                <button id="add-function" onclick="addFunction()">Add Function</button>
+                <div id="functions-editor" class="functions-editor"></div>
+                <button id="add-function">Add Function</button>
             </section>
-        </div>
-        <div class="chat-area">
+        </aside>
+        <main class="chat-area">
             <div class="chat-window" id="chat-messages"></div>
+            <div id="loader" class="loader">
+                <div class="ls-particles ls-part-1"></div>
+                <div class="ls-particles ls-part-2"></div>
+                <div class="ls-particles ls-part-3"></div>
+                <div class="ls-particles ls-part-4"></div>
+                <div class="ls-particles ls-part-5"></div>
+                <div class="lightsaber ls-left ls-green"></div>
+                <div class="lightsaber ls-right ls-red"></div>
+            </div>
             <div class="chat-input">
-                <input type="text" id="chat-message" placeholder="Type your message here...">
+                <input type="text" id="chat-message" placeholder="Type your message here..." aria-label="Chat message input">
                 <button onclick="sendMessage()">Send</button>
             </div>
-        </div>
-        
-        <!-- Star Wars Loader -->
-        <div id="loader" style="display: none;">
-            <div class="ls-particles ls-part-1"></div>
-            <div class="ls-particles ls-part-2"></div>
-            <div class="ls-particles ls-part-3"></div>
-            <div class="ls-particles ls-part-4"></div>
-            <div class="ls-particles ls-part-5"></div>
-            <div class="lightsaber ls-left ls-green"></div>
-            <div class="lightsaber ls-right ls-red"></div>
-        </div>
+        </main>
     </div>
     <script src="/static/script.js"></script>
 </body>

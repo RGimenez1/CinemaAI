@@ -1,4 +1,4 @@
-/* styles.css */
+/* General Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f9f9f9;
@@ -41,6 +41,7 @@ body {
     width: 100px;
     height: auto;
     margin-bottom: 10px;
+    border-radius: 50%;
 }
 
 .sidebar h1 {
@@ -71,12 +72,12 @@ body {
     color: #333;
 }
 
-#functions-editor {
+.functions-editor {
     background-color: #f1f1f1;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 15px;
     border: 1px solid #ddd;
-    height: 200px;
+    height: 400px;
     overflow-y: auto;
     font-size: 0.9em;
     color: #444;
@@ -85,9 +86,9 @@ body {
 
 #add-function {
     padding: 10px;
-    background-color: #4CAF50;
+    background-color: #10a37f;
     border: none;
-    border-radius: 5px;
+    border-radius: 15px;
     color: white;
     font-size: 1em;
     cursor: pointer;
@@ -96,7 +97,7 @@ body {
 }
 
 #add-function:hover {
-    background-color: #45a049;
+    background-color: #0e8b6c;
 }
 
 .chat-area {
@@ -116,6 +117,7 @@ body {
     background-color: #fff;
     overflow-y: auto;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .chat-input {
@@ -127,24 +129,25 @@ body {
     flex: 1;
     padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 15px;
     margin-right: 10px;
     font-size: 1em;
     color: #333;
+    height: 20px;
 }
 
 .chat-input button {
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: #10a37f;
     border: none;
-    border-radius: 5px;
+    border-radius: 15px;
     color: white;
     font-size: 1em;
     cursor: pointer;
 }
 
 .chat-input button:hover {
-    background-color: #45a049;
+    background-color: #0e8b6c;
 }
 
 .user-message,
@@ -168,13 +171,14 @@ body {
 }
 
 /* Star Wars Loader CSS */
-#loader {
-    width: 80px;
-    height: 40px;
+.loader {
     position: absolute;
     top: 50%;
     left: 50%;
-    margin: -20px -40px;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 40px;
+    display: none;
     z-index: 1000;
 }
 
@@ -196,8 +200,7 @@ body {
 }
 
 .lightsaber:before {
-    position: absolute;
-    content: ' ';
+    content: '';
     display: block;
     width: 2px;
     height: 25px;
@@ -206,13 +209,13 @@ body {
     top: 1px;
     background-color: #fff;
     border-radius: 1px;
+    position: absolute;
     transform: rotateZ(180deg);
     transform-origin: center top;
 }
 
 .lightsaber:after {
-    position: absolute;
-    content: ' ';
+    content: '';
     display: block;
     width: 2px;
     height: 2px;
@@ -220,6 +223,7 @@ body {
     top: 4px;
     background-color: #fff;
     border-radius: 50%;
+    position: absolute;
 }
 
 .ls-particles {
@@ -228,7 +232,7 @@ body {
     top: 10px;
     width: 1px;
     height: 5px;
-    background-color: rgb(51, 51, 51, 0);
+    background-color: rgba(51, 51, 51, 0);
     transform: rotateZ(0deg);
 }
 
