@@ -39,6 +39,9 @@ async function sendMessage() {
   userMessageElement.textContent = `User: ${message}`;
   chatOutput.appendChild(userMessageElement);
 
+  // Show loader
+  document.getElementById('loader').style.display = 'block';
+
   try {
     // Fetch the streaming response
     const response = await fetch(
@@ -52,7 +55,9 @@ async function sendMessage() {
       }
     );
 
+    // Hide loader if no response body
     if (!response.body) {
+      document.getElementById('loader').style.display = 'none';
       const errorElement = document.createElement('div');
       errorElement.classList.add('error-message');
       errorElement.innerHTML =
@@ -85,5 +90,8 @@ async function sendMessage() {
     errorElement.classList.add('error-message');
     errorElement.innerHTML = `<strong>Error:</strong> ${error.message}`;
     chatOutput.appendChild(errorElement);
+  } finally {
+    // Hide loader when the process is complete
+    document.getElementById('loader').style.display = 'none';
   }
 }
