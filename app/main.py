@@ -8,6 +8,8 @@ from app.api.chat import router as chat_router
 from pydantic import BaseModel, ValidationError
 import logging
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 # Initialize the FastAPI application
 app = FastAPI()
@@ -23,8 +25,10 @@ app.add_middleware(
 app.include_router(movie_router, prefix="/api")
 app.include_router(chat_router, prefix="/api")
 
-# Mount the static files directory to serve static files like CSS, JS, images, etc.
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount(
+    "/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static"
+)
+
 
 # Setup the templates directory
 templates = Jinja2Templates(directory="app/templates")

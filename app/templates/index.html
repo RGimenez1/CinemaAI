@@ -3,84 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Streaming</title>
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        #chat-output {
-            white-space: pre-wrap;
-            border: 1px solid #ddd;
-            padding: 10px;
-            height: 300px;
-            overflow-y: auto;
-            margin-top: 20px;
-        }
-        #chat-input {
-            width: 300px;
-            padding: 10px;
-            margin-top: 20px;
-        }
-        #logo {
-            width: 100px;  /* Adjust the width as needed */
-            height: auto;
-            margin-bottom: 20px;
-        }
-    </style>
+    <title>CinemaAI Playground</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>Chat with Streaming Response</h1>
-    <!-- <img id="logo" src="/static/cinemaAI_logo.svg" alt="CinemaAI Logo"> -->
-    <input type="text" id="chat-input" placeholder="Type your message..." />
-    <button onclick="sendMessage()">Send</button>
-    <div id="chat-output"></div>
-
-    <script>
-        async function sendMessage() {
-            const messageInput = document.getElementById('chat-input');
-            const message = messageInput.value;
-            const chatOutput = document.getElementById('chat-output');
-
-            if (!message) {
-                alert("Please enter a message.");
-                return;
-            }
-
-            // Clear the output area
-            chatOutput.textContent = '';
-
-            try {
-                // Fetch the streaming response
-                const response = await fetch(`http://127.0.0.1:8000/api/chat?message=${encodeURIComponent(message)}`, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.body) {
-                    chatOutput.textContent = 'No response body available.';
-                    return;
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder('utf-8');
-                let done = false;
-
-                while (!done) {
-                    const { value, done: doneReading } = await reader.read();
-                    done = doneReading;
-                    const chunk = decoder.decode(value, { stream: true });
-                    chatOutput.textContent += chunk;
-                    chatOutput.scrollTop = chatOutput.scrollHeight; // Scroll to bottom
-                }
-            } catch (error) {
-                chatOutput.textContent = `Error: ${error.message}`;
-            }
+    <div class="container">
+        <aside class="sidebar">
+            <header>
+                <img src="/static/cinemaAI_logo.webp" alt="CinemaAI Logo" class="logo">
+                <h1>CinemaAI Playground</h1>
+            </header>
+            <section class="instructions">
+                <h2>System Instructions</h2>
+                <textarea id="system-prompt" placeholder="Enter your system prompt here..."></textarea>
+            </section>
+            <section class="model-config">
+                <h2>Model Configuration</h2>
+                <div>
+                    <label for="model-select">Model</label>
+                    <select id="model-select">
+                        <option value="gpt-4o">gpt-4o</option>
+                        <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                        <!-- Add other models as needed -->
+                    </select>
+                </div>
+            </section>
+            <section class="tools">
+                <h2>Functions</h2>
+                <pre id="functions-config">{
+  "type": "function",
+  "function": {
+    "name": "function_name",
+    "description": "Description of the function",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "prop1": {
+          "type": "string",
+          "description": "Description of prop1"
         }
-    </script>
+      }
+    }
+  }
+}</pre>
+            </section>
+        </aside>
+        <main class="chat-area">
+            <div class="chat-window" id="chat-window">
+                <div class="chat-messages" id="chat-messages"></div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-message" placeholder="Type your message here...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </main>
+    </div>
+    <script src="/static/script.js"></script>
 </body>
 </html>
