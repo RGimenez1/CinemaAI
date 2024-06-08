@@ -54,8 +54,10 @@
             try {
                 // Fetch the streaming response
                 const response = await fetch(`http://127.0.0.1:8000/api/chat?message=${encodeURIComponent(message)}`, {
+                    method: 'POST',
                     headers: {
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
                     }
                 });
 

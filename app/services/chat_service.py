@@ -1,3 +1,4 @@
+from pyexpat import model
 import openai
 from app.core.config import settings
 
@@ -5,41 +6,48 @@ from app.core.config import settings
 openai.api_key = settings.OPENAI_API_KEY
 
 
-async def get_openai_response(message: str):
+class CinemaAIChat:
     """
-    Interacts with OpenAI to get a response for a given message.
-    Returns a generator to stream the response.
+    A class to handle interactions with OpenAI for the CinemaAI assistant.
     """
-    try:
-        # Initiate the API call for chat completion with streaming
-        response = openai.chat.completions.create(
-            model="gpt-4o",  # Specify the model to use
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are CinemaAI, a knowledgeable and friendly movie assistant.",
-                },
-                {"role": "user", "content": message},
-            ],
-            max_tokens=150,
-            stream=True,  # Enable streaming
-        )
 
-        # Stream the response chunks
-        # TODO: handle stop and tools scenarios
-        assistant_message = ""
-        finish_reason = ""
+    def __init__(self):
+        self.model = settings.OPENAI_MODEL
+        self.system_message = {
+            "role": "system",
+            "content": "You are Nico, a knowledgeable and friendly movie assistant of CinemaAI.",
+        }
 
-        for chunk in response:
-            choice = chunk.choices[0]
-            delta = choice.delta
-            finish_reason = choice.finish_reason
+    async def stream_response(self, user_message: str):
+        """
+        Streams the response from OpenAI's chat model.
+        """
+        try:
+            # Initiate the API call for chat completion with streaming
+            response = openai.chat.completions.create(
+                model=self.model,
+                messages=[
+                    self.system_message,
+                    {"role": "user", "content": user_message},
+                ],
+                max_tokens=150,
+                stream=True,  # Enable streaming
+            )
 
-            if delta.content:
-                assistant_message += delta.content
-                yield delta.content
-            if finish_reason == "stop":
-                return
+            # Stream the response chunks
+            assistant_message = ""
+            finish_reason = ""
 
-    except Exception as e:
-        yield f"Error: {str(e)}"
+            for chunk in response:
+                choice = chunk.choices[0]
+                delta = choice.delta
+                finish_reason = choice.finish_reason
+
+                if delta.content:
+                    assistant_message += delta.content
+                    yield delta.content
+                if finish_reason == "stop":
+                    break
+
+        except Exception as e:
+            yield f"Error: {str(e)}"
