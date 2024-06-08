@@ -1,3 +1,25 @@
+window.onload = function () {
+  // Initialize the Ace Editor for functions
+  const functionsEditor = ace.edit('functions-editor');
+  functionsEditor.setTheme('ace/theme/github');
+  functionsEditor.session.setMode('ace/mode/json');
+  functionsEditor.setOptions({
+    maxLines: 10,
+    autoScrollEditorIntoView: true,
+  });
+
+  // Function to add function JSON
+  document
+    .getElementById('add-function')
+    .addEventListener('click', function () {
+      const jsonValue = functionsEditor.getValue();
+      if (jsonValue) {
+        console.log('Function added:', jsonValue);
+        // Add your logic to handle the added function JSON here
+      }
+    });
+};
+
 async function sendMessage() {
   const messageInput = document.getElementById('chat-message');
   const message = messageInput.value;

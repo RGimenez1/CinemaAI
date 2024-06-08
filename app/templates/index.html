@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CinemaAI Playground</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <div class="container">
@@ -13,37 +14,21 @@
                 <img src="/static/cinemaAI_logo.webp" alt="CinemaAI Logo" class="logo">
                 <h1>CinemaAI Playground</h1>
             </header>
-            <section class="instructions">
+            <section>
                 <h2>System Instructions</h2>
                 <textarea id="system-prompt" placeholder="Enter your system prompt here..."></textarea>
             </section>
-            <section class="config">
+            <section>
                 <h2>Model Configuration</h2>
-                <label for="model-select">Model</label>
-                <select id="model-select">
+                <select id="model-selection">
                     <option value="gpt-4o">gpt-4o</option>
-                    <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-                    <!-- Add more options as needed -->
+                    <!-- Add more models as needed -->
                 </select>
             </section>
-            <section class="functions">
+            <section>
                 <h2>Functions</h2>
-                <pre id="functions-config">{
-  "type": "function",
-  "function": {
-    "name": "function_name",
-    "description": "Description of the function",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "prop1": {
-          "type": "string",
-          "description": "Description of prop1"
-        }
-      }
-    }
-  }
-}</pre>
+                <div id="functions-editor" style="height: 200px; width: 100%;"></div>
+                <button id="add-function" onclick="addFunction()">Add Function</button>
             </section>
         </div>
         <div class="chat-area">

@@ -1,43 +1,36 @@
 /* styles.css */
-
-/* General body styling */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f9f9f9;
     margin: 0;
     padding: 0;
-    height: 100vh; /* Full height of the viewport */
-    width: 100vw;  /* Full width of the viewport */
-    overflow: hidden; /* Prevent scrolling on the body */
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-/* Main container styling */
-.container {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 100%; /* Full height of the parent body */
-    max-width: 1600px;
-    background-color: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    height: 100vh;
     overflow: hidden;
 }
 
-/* Sidebar styling */
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    max-width: 1600px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+}
+
 .sidebar {
     width: 350px;
     background-color: #f7f7f7;
     border-right: 1px solid #ddd;
     padding: 20px;
-    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    overflow-y: auto; /* Enable scrolling for the sidebar */
+    box-sizing: border-box;
 }
 
 .sidebar header {
@@ -78,21 +71,36 @@ body {
     color: #333;
 }
 
-.sidebar pre {
+#functions-editor {
     background-color: #f1f1f1;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ddd;
-    overflow-x: auto;
-    white-space: pre-wrap;
+    height: 200px;
+    overflow-y: auto;
     font-size: 0.9em;
     color: #444;
-    height: 200px; /* Control the height of the pre element */
+    box-sizing: border-box;
 }
 
-/* Chat area styling */
+#add-function {
+    padding: 10px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+    align-self: flex-start;
+}
+
+#add-function:hover {
+    background-color: #45a049;
+}
+
 .chat-area {
-    flex: 1; /* Take up remaining space */
+    flex: 1;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -100,7 +108,6 @@ body {
     overflow-y: auto;
 }
 
-/* Chat window */
 .chat-window {
     flex: 1;
     border: 1px solid #ddd;
@@ -111,7 +118,6 @@ body {
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Chat input section */
 .chat-input {
     display: flex;
     margin-top: 10px;
@@ -141,8 +147,8 @@ body {
     background-color: #45a049;
 }
 
-/* Message styling */
-.user-message, .ai-message, .error-message {
+.user-message,
+.ai-message {
     margin: 5px 0;
     padding: 8px 12px;
     border-radius: 10px;
@@ -159,9 +165,4 @@ body {
     background-color: #f1f1f1;
     align-self: flex-start;
     color: #333;
-}
-
-.error-message {
-    background-color: #fff3cd;
-    color: #856404;
 }
