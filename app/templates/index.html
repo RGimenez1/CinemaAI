@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container">
-        <aside class="sidebar">
+        <div class="sidebar">
             <header>
                 <img src="/static/cinemaAI_logo.webp" alt="CinemaAI Logo" class="logo">
                 <h1>CinemaAI Playground</h1>
@@ -17,18 +17,16 @@
                 <h2>System Instructions</h2>
                 <textarea id="system-prompt" placeholder="Enter your system prompt here..."></textarea>
             </section>
-            <section class="model-config">
+            <section class="config">
                 <h2>Model Configuration</h2>
-                <div>
-                    <label for="model-select">Model</label>
-                    <select id="model-select">
-                        <option value="gpt-4o">gpt-4o</option>
-                        <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
-                        <!-- Add other models as needed -->
-                    </select>
-                </div>
+                <label for="model-select">Model</label>
+                <select id="model-select">
+                    <option value="gpt-4o">gpt-4o</option>
+                    <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                    <!-- Add more options as needed -->
+                </select>
             </section>
-            <section class="tools">
+            <section class="functions">
                 <h2>Functions</h2>
                 <pre id="functions-config">{
   "type": "function",
@@ -47,16 +45,14 @@
   }
 }</pre>
             </section>
-        </aside>
-        <main class="chat-area">
-            <div class="chat-window" id="chat-window">
-                <div class="chat-messages" id="chat-messages"></div>
-            </div>
+        </div>
+        <div class="chat-area">
+            <div class="chat-window" id="chat-messages"></div>
             <div class="chat-input">
                 <input type="text" id="chat-message" placeholder="Type your message here...">
                 <button onclick="sendMessage()">Send</button>
             </div>
-        </main>
+        </div>
     </div>
     <script src="/static/script.js"></script>
 </body>
