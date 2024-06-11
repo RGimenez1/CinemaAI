@@ -62,13 +62,12 @@ window.onload = async function () {
     );
   }
 };
-
 async function sendMessage() {
   const messageInput = document.getElementById('chat-message');
   const message = messageInput.value;
   const chatOutput = document.getElementById('chat-messages');
   const loader = document.getElementById('loader');
-  const contextId = document.getElementById('context_id').value; // Get the context_id from the textarea
+  const contextId = document.getElementById('context_id').value;
 
   if (!message) {
     alert('Please enter a message.');
@@ -90,9 +89,11 @@ async function sendMessage() {
   try {
     // Create the request payload
     const payload = {
-      context_id: contextId, // Send the context_id from the textarea
+      context_id: contextId,
       message: message,
     };
+
+    console.log('Sending payload:', payload);
 
     const response = await fetch('http://127.0.0.1:8000/api/chat', {
       method: 'POST',
@@ -102,6 +103,11 @@ async function sendMessage() {
       },
       body: JSON.stringify(payload),
     });
+
+    // Check for response status
+    if (!response.ok) {
+      throw new Error(`Server responded with status ${response.status}`);
+    }
 
     // Hide loader if no response body
     if (!response.body) {
@@ -115,8 +121,12 @@ async function sendMessage() {
     // Create an element to hold the AI response
     const aiMessageElement = document.createElement('div');
     aiMessageElement.classList.add('ai-message');
-    aiMessageElement.textContent = 'AI: ';
     chatOutput.appendChild(aiMessageElement);
+
+    let fullMessage = ''; // To accumulate the full response
+
+    // Initialize Showdown converter
+    const converter = new showdown.Converter();
 
     // Read the response stream
     while (!done) {
@@ -124,11 +134,24 @@ async function sendMessage() {
       done = doneReading;
       const chunk = decoder.decode(value, { stream: true });
 
-      // Append the chunk to the AI message element
-      aiMessageElement.textContent += chunk;
+      fullMessage += chunk; // Accumulate the chunks
+
+      // Log the fullMessage to verify its content
+      // console.log('AI Response (raw):', fullMessage);
+
+      // Convert Markdown to HTML using Showdown.js
+      try {
+        const htmlContent = converter.makeHtml(fullMessage);
+        aiMessageElement.innerHTML = htmlContent; // Set converted HTML
+      } catch (renderingError) {
+        // console.error('Error rendering Markdown:', renderingError);
+        aiMessageElement.innerHTML = `<div class="error-message">Error rendering Markdown: ${renderingError.message}</div>`;
+      }
       chatOutput.scrollTop = chatOutput.scrollHeight; // Scroll to bottom
     }
   } catch (error) {
+    console.error('Error during chat processing:', error);
+
     const errorElement = document.createElement('div');
     errorElement.classList.add('error-message');
     errorElement.innerHTML = `<strong>Error:</strong> ${error.message}`;
