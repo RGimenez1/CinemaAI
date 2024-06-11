@@ -12,6 +12,7 @@ class Settings:
     MONGO_URI = f"mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_CLUSTER_URL}/{MONGO_DB_NAME}?retryWrites=true&w=majority"
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_MODEL = os.getenv("OPENAI_MODEL")
+    SYSTEM_PROMPT_VERSION = os.getenv("SYSTEM_PROMPT_VERSION")
 
 
 settings = Settings()

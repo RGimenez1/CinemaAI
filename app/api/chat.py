@@ -1,9 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Body
 from fastapi.responses import StreamingResponse
-import uuid
 from app.models.requests.chat_request import ChatRequest
 from app.services.chat_service import CinemaAIChat
-from pydantic import BaseModel
 
 router = APIRouter()
 

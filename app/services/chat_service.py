@@ -1,6 +1,7 @@
 import uuid
 import openai
 from app.core.config import settings
+from app.core.utils import get_system_prompt
 from app.services.message_service import MessageService
 
 openai.api_key = settings.OPENAI_API_KEY
@@ -18,7 +19,7 @@ class CinemaAIChat:
         self.model = settings.OPENAI_MODEL
         self.system_message = {
             "role": "system",
-            "content": "You are Nico, a knowledgeable and friendly movie assistant of CinemaAI.",
+            "content": get_system_prompt(int(settings.SYSTEM_PROMPT_VERSION)),
         }
 
     async def stream_response(self, user_message: str):
