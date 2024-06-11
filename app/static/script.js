@@ -10,6 +10,20 @@ window.onload = function () {
     minLines: 15, // Ensure the editor shows at least this many lines initially
   });
 
+  // Generate a UUID-like context_id
+  function generateUUID() {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+      (
+        c ^
+        (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+      ).toString(16)
+    );
+  }
+
+  // Set the generated context_id in the textarea
+  const contextId = generateUUID();
+  document.getElementById('context_id').value = contextId;
+
   // Event listener to add function JSON
   document
     .getElementById('add-function')
@@ -38,6 +52,7 @@ async function sendMessage() {
   const message = messageInput.value;
   const chatOutput = document.getElementById('chat-messages');
   const loader = document.getElementById('loader');
+  const contextId = document.getElementById('context_id').value; // Get the context_id from the textarea
 
   if (!message) {
     alert('Please enter a message.');
@@ -57,16 +72,20 @@ async function sendMessage() {
   loader.style.display = 'block';
 
   try {
-    const response = await fetch(
-      `http://127.0.0.1:8000/api/chat?message=${encodeURIComponent(message)}`,
-      {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    // Create the request payload
+    const payload = {
+      context_id: contextId, // Send the context_id from the textarea
+      message: message,
+    };
+
+    const response = await fetch('http://127.0.0.1:8000/api/chat', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
 
     // Hide loader if no response body
     if (!response.body) {
