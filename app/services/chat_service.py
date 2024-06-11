@@ -1,6 +1,7 @@
-from pyexpat import model
+import uuid
 import openai
 from app.core.config import settings
+from app.services.message_service import MessageService
 
 
 openai.api_key = settings.OPENAI_API_KEY
@@ -11,24 +12,27 @@ class CinemaAIChat:
     A class to handle interactions with OpenAI for the CinemaAI assistant.
     """
 
-    def __init__(self):
+    def __init__(self, context_id: str):
+        self.message_service = MessageService(context_id)
         self.model = settings.OPENAI_MODEL
         self.system_message = {
             "role": "system",
             "content": "You are Nico, a knowledgeable and friendly movie assistant of CinemaAI.",
         }
 
-    async def stream_response(self, user_message: str):
+    async def stream_response(self, context_id: str, user_message: str):
         """
         Streams the response from OpenAI's chat model.
         """
         try:
+            context_id = context_id or str(uuid.uuid1())
+            messages = self.message_service.messages
+            messages.append(self.system_message)
+            messages.append({"role": "user", "content": user_message})
+
             response = openai.chat.completions.create(
                 model=self.model,
-                messages=[
-                    self.system_message,
-                    {"role": "user", "content": user_message},
-                ],
+                messages=messages,
                 max_tokens=150,
                 stream=True,
             )
