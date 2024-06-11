@@ -1,13 +1,13 @@
-window.onload = function () {
+window.onload = async function () {
   // Initialize the Ace Editor for functions
   const functionsEditor = ace.edit('functions-editor');
   functionsEditor.setTheme('ace/theme/github');
   functionsEditor.session.setMode('ace/mode/json');
   functionsEditor.setOptions({
-    maxLines: 20, // Increase the maximum number of lines to show by default
+    maxLines: 20,
     autoScrollEditorIntoView: true,
-    wrap: true, // Enable wrapping to prevent horizontal scrolling
-    minLines: 15, // Ensure the editor shows at least this many lines initially
+    wrap: true,
+    minLines: 15,
   });
 
   // Generate a UUID-like context_id
@@ -39,12 +39,28 @@ window.onload = function () {
   const messageInput = document.getElementById('chat-message');
   messageInput.addEventListener('keydown', function (event) {
     if (event.key === 'Enter' && !event.shiftKey) {
-      // Prevent the default action (new line)
       event.preventDefault();
-      // Send the message
       sendMessage();
     }
   });
+
+  // Fetch the system prompt from the backend
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/system-prompt'); // Adjust URL as needed
+    if (!response.ok) {
+      throw new Error('Failed to fetch the system prompt.');
+    }
+
+    const data = await response.json();
+    if (data && data.content) {
+      document.getElementById('system-prompt').value = data.content;
+    }
+  } catch (error) {
+    console.error('Error fetching system prompt:', error);
+    alert(
+      'Unable to fetch the system prompt. Please check the console for more details.'
+    );
+  }
 };
 
 async function sendMessage() {
