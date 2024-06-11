@@ -1,7 +1,7 @@
 import uuid
 import openai
 from app.core.config import settings
-from app.core.utils import get_system_prompt
+from app.core.utils import get_system_prompt, get_tool
 from app.services.message_service import MessageService
 
 openai.api_key = settings.OPENAI_API_KEY
@@ -49,6 +49,44 @@ class CinemaAIChat:
             # Get the response from OpenAI
             response = openai.chat.completions.create(
                 model=self.model,
+                tool_choice="auto",
+                tools=[
+                    {
+                        "type": "function",
+                        "function": {
+                            "name": "movie_searcher",
+                            "description": "Extracts parameters for searching movies based on user input such as title, genres, year, director, imdb score or cast member.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "description": "The title of the movie e.g. Inception, The Dark Knight.",
+                                    },
+                                    "genres": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "description": "List of genres e.g. Action, Drama, Sci-Fi.",
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "description": "The release year of the movie e.g. 2010.",
+                                    },
+                                    "director": {
+                                        "type": "string",
+                                        "description": "The director's name e.g. Christopher Nolan, Quentin Tarantino.",
+                                    },
+                                    "cast_member": {
+                                        "type": "string",
+                                        "description": "Name of an actor or actress e.g. Leonardo DiCaprio, Brad Pitt.",
+                                    },
+                                },
+                                "required": [],
+                            },
+                        },
+                    }
+                ],
+                # tools=self.tools,
                 messages=conversation,
                 max_tokens=150,
                 stream=True,

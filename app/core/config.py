@@ -13,6 +13,7 @@ class Settings:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
     OPENAI_MODEL = os.getenv("OPENAI_MODEL")
     SYSTEM_PROMPT_VERSION = os.getenv("SYSTEM_PROMPT_VERSION")
+    TOOL_VERSION = os.getenv("TOOL_VERSION")
 
 
 settings = Settings()

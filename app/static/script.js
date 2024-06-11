@@ -61,6 +61,24 @@ window.onload = async function () {
       'Unable to fetch the system prompt. Please check the console for more details.'
     );
   }
+  
+  try {
+    const toolResponse = await fetch('http://127.0.0.1:8000/api/tools'); // Adjust URL and version as needed
+    if (!toolResponse.ok) {
+      throw new Error('Failed to fetch the tools.');
+    }
+
+    const toolData = await toolResponse.json();
+    if (toolData && toolData.content) {
+      // Set the fetched tool data in the Ace Editor
+      functionsEditor.setValue(JSON.stringify(toolData.content, null, 2));
+    }
+  } catch (error) {
+    console.error('Error fetching tools:', error);
+    alert(
+      'Unable to fetch the tools. Please check the console for more details.'
+    );
+  }
 };
 async function sendMessage() {
   const messageInput = document.getElementById('chat-message');

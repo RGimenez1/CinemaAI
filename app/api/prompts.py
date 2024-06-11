@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, HTTPException
-from app.core.utils import get_system_prompt, get_tool
+from app.core.utils import get_system_prompt, get_tool, transform_tool
 from app.core.config import settings
 
 router = APIRouter()
@@ -41,6 +41,9 @@ async def get_tools(
         if "error" in tool_content:
             raise HTTPException(status_code=404, detail=tool_content["error"])
 
-        return {"version": tool_version, "content": tool_content}
+        # Transform the tool content to match OpenAI's expected format
+        transformed_tool = transform_tool(tool_content)
+
+        return {"version": tool_version, "content": transformed_tool}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
