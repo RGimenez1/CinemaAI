@@ -3,7 +3,6 @@ import openai
 from app.core.config import settings
 from app.services.message_service import MessageService
 
-
 openai.api_key = settings.OPENAI_API_KEY
 
 
@@ -12,32 +11,49 @@ class CinemaAIChat:
     A class to handle interactions with OpenAI for the CinemaAI assistant.
     """
 
-    def __init__(self, context_id: str):
-        self.message_service = MessageService(context_id)
+    def __init__(self, context_id: str = None):
+        # Generate a new context_id if one is not provided
+        self.context_id = context_id or str(uuid.uuid1())
+        self.message_service = MessageService(self.context_id)
         self.model = settings.OPENAI_MODEL
         self.system_message = {
             "role": "system",
             "content": "You are Nico, a knowledgeable and friendly movie assistant of CinemaAI.",
         }
 
-    async def stream_response(self, context_id: str, user_message: str):
+    async def stream_response(self, user_message: str):
         """
         Streams the response from OpenAI's chat model.
         """
         try:
-            context_id = context_id or str(uuid.uuid1())
-            messages = self.message_service.messages
-            messages.append(self.system_message)
-            messages.append({"role": "user", "content": user_message})
+            # Retrieve previous messages for the given context_id
+            messages = await self.message_service.get_messages()
 
+            # If it's a new context, start with the system message
+            if not messages:
+                self.message_service.add_system_message(self.system_message["content"])
+
+            # Add the new user message to the local message list
+            self.message_service.add_user_message(user_message)
+
+            # Prepare the messages for sending to OpenAI
+            conversation = messages + [
+                {
+                    "role": self.system_message["role"],
+                    "content": self.system_message["content"],
+                },
+                {"role": "user", "content": user_message},
+            ]
+
+            # Get the response from OpenAI
             response = openai.chat.completions.create(
                 model=self.model,
-                messages=messages,
+                messages=conversation,
                 max_tokens=150,
                 stream=True,
             )
 
-            # Stream the response chunks
+            # Stream the response chunks and gather the full assistant message
             assistant_message = ""
             finish_reason = ""
 
@@ -51,6 +67,12 @@ class CinemaAIChat:
                     yield delta.content
                 if finish_reason == "stop":
                     break
+
+            # Save the assistant message to the local message list
+            self.message_service.add_assistant_message(assistant_message)
+
+            # Commit the new messages to the database
+            await self.message_service.commit()
 
         except Exception as e:
             yield f"Error: {str(e)}"

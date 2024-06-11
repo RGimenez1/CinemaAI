@@ -23,7 +23,7 @@ async def chat_endpoint(request_body: ChatRequest):
 
         # Define the async generator for streaming the response
         async def response_generator():
-            async for chunk in ai_chat.stream_response(context_id, message):
+            async for chunk in ai_chat.stream_response(message):
                 yield chunk
 
         # Return the streaming response
