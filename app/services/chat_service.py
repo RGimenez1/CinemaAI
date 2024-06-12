@@ -21,6 +21,7 @@ class CinemaAIChat:
             "role": "system",
             "content": get_system_prompt(int(settings.SYSTEM_PROMPT_VERSION)),
         }
+        self.tools = get_tool(int(settings.TOOL_VERSION))["tools"]
 
     async def stream_response(self, user_message: str):
         """
@@ -50,43 +51,7 @@ class CinemaAIChat:
             response = openai.chat.completions.create(
                 model=self.model,
                 tool_choice="auto",
-                tools=[
-                    {
-                        "type": "function",
-                        "function": {
-                            "name": "movie_searcher",
-                            "description": "Extracts parameters for searching movies based on user input such as title, genres, year, director, imdb score or cast member.",
-                            "parameters": {
-                                "type": "object",
-                                "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "description": "The title of the movie e.g. Inception, The Dark Knight.",
-                                    },
-                                    "genres": {
-                                        "type": "array",
-                                        "items": {"type": "string"},
-                                        "description": "List of genres e.g. Action, Drama, Sci-Fi.",
-                                    },
-                                    "year": {
-                                        "type": "integer",
-                                        "description": "The release year of the movie e.g. 2010.",
-                                    },
-                                    "director": {
-                                        "type": "string",
-                                        "description": "The director's name e.g. Christopher Nolan, Quentin Tarantino.",
-                                    },
-                                    "cast_member": {
-                                        "type": "string",
-                                        "description": "Name of an actor or actress e.g. Leonardo DiCaprio, Brad Pitt.",
-                                    },
-                                },
-                                "required": [],
-                            },
-                        },
-                    }
-                ],
-                # tools=self.tools,
+                tools=self.tools,
                 messages=conversation,
                 max_tokens=150,
                 stream=True,
@@ -104,7 +69,7 @@ class CinemaAIChat:
                 if delta.content:
                     assistant_message += delta.content
                     yield delta.content
-                if finish_reason == "stop":
+                if finish_reason == "stop":  # tool_calls ;
                     break
 
             # Save the assistant message to the local message list
