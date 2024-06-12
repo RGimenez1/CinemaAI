@@ -12,7 +12,7 @@ class OpenAIRepository:
     def __init__(self):
         self.model = settings.OPENAI_MODEL
 
-    async def get_streamed_response(self, conversation, tools):
+    def get_streamed_response(self, conversation, tools):
         """
         Streams the response from OpenAI's chat model.
         """
@@ -26,20 +26,7 @@ class OpenAIRepository:
                 tool_choice="auto",
             )
 
-            # Stream the response chunks and gather the full assistant message
-            assistant_message = ""
-            finish_reason = ""
-
-            for chunk in response:
-                choice = chunk.choices[0]
-                delta = choice.delta
-                finish_reason = choice.finish_reason
-
-                if delta.content:
-                    assistant_message += delta.content
-                    yield delta.content
-                if finish_reason == "stop":  # tool_calls ;
-                    break
+            return response  # Return the response object for iteration
 
         except Exception as e:
-            yield f"Error: {str(e)}"
+            raise RuntimeError(f"Error fetching OpenAI response: {str(e)}")
