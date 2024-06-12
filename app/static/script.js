@@ -61,17 +61,20 @@ window.onload = async function () {
       'Unable to fetch the system prompt. Please check the console for more details.'
     );
   }
-  
+
   try {
-    const toolResponse = await fetch('http://127.0.0.1:8000/api/tools'); // Adjust URL and version as needed
+    const toolResponse = await fetch('http://127.0.0.1:8000/api/tools');
     if (!toolResponse.ok) {
       throw new Error('Failed to fetch the tools.');
     }
 
     const toolData = await toolResponse.json();
-    if (toolData && toolData.content) {
-      // Set the fetched tool data in the Ace Editor
-      functionsEditor.setValue(JSON.stringify(toolData.content, null, 2));
+
+    if (toolData && toolData.content && toolData.content.tools) {
+      const tools = toolData.content.tools;
+      functionsEditor.setValue(JSON.stringify(tools, null, 2));
+    } else {
+      alert('No tools data available.');
     }
   } catch (error) {
     console.error('Error fetching tools:', error);
@@ -80,6 +83,7 @@ window.onload = async function () {
     );
   }
 };
+
 async function sendMessage() {
   const messageInput = document.getElementById('chat-message');
   const message = messageInput.value;

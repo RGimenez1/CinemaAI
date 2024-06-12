@@ -1,5 +1,5 @@
 from pydantic import ValidationError
-from app.repository.database import movies_collection, build_search_query
+from app.repositories.database import movies_collection, build_search_query
 from app.models.movie import Movie
 from typing import List, Optional
 from bson import ObjectId
