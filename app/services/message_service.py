@@ -1,5 +1,4 @@
 from datetime import datetime, timezone
-import json
 from app.repositories.database import database
 from app.models.enums.roles import Roles
 from pymongo.collection import Collection
@@ -17,56 +16,57 @@ class MessageService:
         document = await self.db_repository.find_one({"_id": self.context_id})
         return document.get("messages", []) if document else []
 
-    async def add_message(self, role: Roles, content: str):
+    async def _add_message(self, message: dict):
         """
-        Add a new message to the database and commit immediately.
+        Internal method to add a message to the database.
         """
-        message = {
-            "role": role.value,
-            "content": content,
-            "created_at": datetime.now(timezone.utc).isoformat(),
-        }
-
         await self.db_repository.update_one(
             {"_id": self.context_id},
             {
-                "$push": {
-                    "messages": message,
-                },
-                "$set": {
-                    "updated_at": datetime.now(timezone.utc).isoformat(),
-                },
+                "$push": {"messages": message},
+                "$set": {"updated_at": datetime.now(timezone.utc).isoformat()},
             },
             upsert=True,
         )
 
     async def add_system_message(self, content: str):
-        await self.add_message(Roles.SYSTEM, content)
+        """
+        Add a system message.
+        """
+        message = {"role": Roles.SYSTEM.value, "content": content}
+        await self._add_message(message)
 
     async def add_user_message(self, content: str):
-        await self.add_message(Roles.USER, content)
+        """
+        Add a user message.
+        """
+        message = {"role": Roles.USER.value, "content": content}
+        await self._add_message(message)
 
     async def add_assistant_message(self, content: str):
-        await self.add_message(Roles.ASSISTANT, content)
+        """
+        Add an assistant message.
+        """
+        message = {"role": Roles.ASSISTANT.value, "content": content}
+        await self._add_message(message)
 
     async def add_assistant_tool_call(self, tool_call: dict):
         """
-        Add a tool call message from the assistant and commit immediately.
+        Add a tool call message from the assistant.
         """
-        tool_call_message = {
+        message = {
+            "role": Roles.ASSISTANT.value,
             "tool_calls": [tool_call],
-            "created_at": datetime.now(timezone.utc).isoformat(),
         }
-        await self.add_message(Roles.ASSISTANT, tool_call_message)
+        await self._add_message(message)
 
     async def add_tool_result(self, tool_call_id: str, content: str):
         """
-        Add the result of a tool call and commit immediately.
+        Add the result of a tool call.
         """
-        tool_result_message = {
-            "role": "tool",
+        message = {
+            "role": Roles.TOOL.value,
             "tool_call_id": tool_call_id,
             "content": content,
         }
-
-        await self.add_message(Roles.TOOL, tool_result_message)
+        await self._add_message(message)
