@@ -7,3 +7,4 @@ class Roles(Enum):
     ASSISTANT = "assistant"
     TOOL = "tool"
     TOOL_CALLS = "tool_calls"
+    FUNCTION = "function"

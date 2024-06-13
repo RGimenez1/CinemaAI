@@ -38,3 +38,6 @@ class Movie(BaseModel):
     type: Optional[str] = None
     writers: Optional[List[str]] = None
     lastupdated: Optional[str] = None
+
+    def to_dict(self):
+        return self.model_dump()

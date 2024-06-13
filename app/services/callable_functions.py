@@ -35,5 +35,13 @@ class CallableFunctions:
         director = params.get("director")
         cast_member = params.get("cast_member")
 
+        movies = await search_movies(title, genres, year, director, cast_member)
+
         # Call the search_movies function with the resolved parameters
-        return await search_movies(title, genres, year, director, cast_member)
+        # message_service.add_message(Roles.FUNCTION, json.dumps(movies))
+        # await message_service.commit()
+
+        movies = [movie.to_dict() for movie in movies]
+        print(f"movies: {movies}")
+
+        return movies
