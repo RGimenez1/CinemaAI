@@ -53,12 +53,16 @@ class MessageService:
         """
         Add a tool call message from the assistant and commit immediately.
         """
-        tool_call_message = json.dumps(
-            {
-                "tool_calls": [tool_call],
-                "created_at": datetime.now(timezone.utc).isoformat(),
-            }
-        )
+        # tool_call_message = json.dumps(
+        #     {
+        #         "tool_calls": [tool_call],
+        #         "created_at": datetime.now(timezone.utc).isoformat(),
+        #     }
+        # )
+        tool_call_message = {
+            "tool_calls": [tool_call],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
         await self.add_message(Roles.ASSISTANT, tool_call_message)
 
     async def add_tool_result(self, tool_call_id: str, content: str):

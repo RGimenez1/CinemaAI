@@ -72,7 +72,7 @@ class CinemaAIChat:
         """
         for tool_call in tool_calls.values():
             # Add the tool call as an assistant message using the new method
-            self.message_service.add_assistant_tool_call(
+            await self.message_service.add_assistant_tool_call(
                 {
                     "id": tool_call["id"],
                     "type": tool_call["type"],
@@ -84,7 +84,6 @@ class CinemaAIChat:
                     },
                 }
             )
-            await self.message_service.commit()
 
     async def save_tool_results(self, tool_results):
         """
@@ -96,7 +95,6 @@ class CinemaAIChat:
                 tool_call_id=result["id"], content=str(result["result"])
             )
             # await self.message_service.commit()
-
 
     async def stream_response(self, user_message: str):
         """
@@ -148,6 +146,7 @@ class CinemaAIChat:
 
                 if finish_reason == "tool_calls":
                     # Save the assistant's decision to call a tool
+                    print(f"Tool calls: {tool_calls}")
                     await self.save_tool_call(tool_calls)
 
                     # Process the tool calls
@@ -158,8 +157,12 @@ class CinemaAIChat:
 
                     # Generate the final assistant response using the tool results
                     for result in tool_results:
-                        assistant_response = f"Here is what I found:\n{result['result']}"
-                        await self.message_service.add_assistant_message(assistant_response)
+                        assistant_response = (
+                            f"Here is what I found:\n{result['result']}"
+                        )
+                        await self.message_service.add_assistant_message(
+                            assistant_response
+                        )
 
                     # End processing here to avoid infinite loop
                     return
