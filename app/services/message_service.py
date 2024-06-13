@@ -73,21 +73,16 @@ class MessageService:
             "role": "tool",
             "tool_call_id": tool_call_id,
             "content": content,
-            "created_at": datetime.now(timezone.utc).isoformat(),
         }
+        # tool_result_message = json.dumps(
+        #     {
+        #         "tool_call_id": tool_call_id,
+        #         "content": content,  # Assume content is a dictionary or complex object
+        #         "created_at": datetime.now(timezone.utc).isoformat(),
+        #     }
+        # )
 
-        await self.db_repository.update_one(
-            {"_id": self.context_id},
-            {
-                "$push": {
-                    "messages": tool_result_message,
-                },
-                "$set": {
-                    "updated_at": datetime.now(timezone.utc).isoformat(),
-                },
-            },
-            upsert=True,
-        )
+        await self.add_message(Roles.TOOL, tool_result_message)
 
     async def add_function_call(self, function_name: str, arguments: dict):
         """

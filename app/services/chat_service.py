@@ -40,6 +40,7 @@ class CinemaAIChat:
             else:
                 tool_result = {"error": "Unknown tool call"}
 
+            ### this is what should be passed back to the AI model as a new message: tool + result
             tool_results.append({"id": tool_call["id"], "result": tool_result})
         return tool_results
 
@@ -91,7 +92,7 @@ class CinemaAIChat:
         """
         for result in tool_results:
             # Add the tool result as a tool message using the new method
-            self.message_service.add_tool_result(
+            await self.message_service.add_tool_result(
                 tool_call_id=result["id"], content=str(result["result"])
             )
             # await self.message_service.commit()
@@ -116,8 +117,9 @@ class CinemaAIChat:
             await self.message_service.add_user_message(user_message)
             messages = (
                 await self.message_service.get_messages()
-            )  # Refresh the messages list
-
+            )
+            
+            print(messages)
             response = openai.chat.completions.create(
                 model=self.model,
                 tool_choice="auto",
@@ -155,14 +157,15 @@ class CinemaAIChat:
                     # Save the tool call results
                     await self.save_tool_results(tool_results)
 
-                    # Generate the final assistant response using the tool results
-                    for result in tool_results:
-                        assistant_response = (
-                            f"Here is what I found:\n{result['result']}"
-                        )
-                        await self.message_service.add_assistant_message(
-                            assistant_response
-                        )
+                    ### TODO: resend to model to get the final response
+                    # # Generate the final assistant response using the tool results
+                    # for result in tool_results:
+                    #     assistant_response = (
+                    #         f"Here is what I found:\n{result['result']}"
+                    #     )
+                    #     await self.message_service.add_assistant_message(
+                    #         assistant_response
+                    #     )
 
                     # End processing here to avoid infinite loop
                     return
