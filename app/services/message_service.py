@@ -53,12 +53,6 @@ class MessageService:
         """
         Add a tool call message from the assistant and commit immediately.
         """
-        # tool_call_message = json.dumps(
-        #     {
-        #         "tool_calls": [tool_call],
-        #         "created_at": datetime.now(timezone.utc).isoformat(),
-        #     }
-        # )
         tool_call_message = {
             "tool_calls": [tool_call],
             "created_at": datetime.now(timezone.utc).isoformat(),
@@ -74,26 +68,5 @@ class MessageService:
             "tool_call_id": tool_call_id,
             "content": content,
         }
-        # tool_result_message = json.dumps(
-        #     {
-        #         "tool_call_id": tool_call_id,
-        #         "content": content,  # Assume content is a dictionary or complex object
-        #         "created_at": datetime.now(timezone.utc).isoformat(),
-        #     }
-        # )
 
         await self.add_message(Roles.TOOL, tool_result_message)
-
-    async def add_function_call(self, function_name: str, arguments: dict):
-        """
-        Add a function call message and commit immediately.
-        """
-        function_call_message = {"function_name": function_name, "arguments": arguments}
-        await self.add_message(Roles.FUNCTION, json.dumps(function_call_message))
-
-    async def add_function_response(self, function_name: str, result: dict):
-        """
-        Add the function's response as a message and commit immediately.
-        """
-        function_response_message = {"function_name": function_name, "result": result}
-        await self.add_message(Roles.FUNCTION, json.dumps(function_response_message))
