@@ -35,7 +35,10 @@ class CallableFunctions:
         director = params.get("director")
         cast_member = params.get("cast_member")
 
-        movies = await search_movies(title, genres, year, director, cast_member)
+        # Maximum movies it will return is 10
+        movies = await search_movies(
+            title, genres, year, director, cast_member, page=1, size=10
+        )
 
         movies = [movie.to_dict() for movie in movies]
 
