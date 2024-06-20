@@ -40,7 +40,7 @@ class CinemaAIChat:
             else:
                 tool_result = {"error": "Unknown tool call"}
 
-            ### this is what should be passed back to the AI model as a new message: tool + result
+            # This is what should be passed back to the AI model as a new message: tool + result
             tool_results.append({"id": tool_call["id"], "result": tool_result})
         return tool_results
 
@@ -95,7 +95,6 @@ class CinemaAIChat:
             await self.message_service.add_tool_result(
                 tool_call_id=result["id"], content=str(result["result"])
             )
-            # await self.message_service.commit()
 
     async def stream_response(self, user_message: str):
         """
@@ -115,40 +114,42 @@ class CinemaAIChat:
                 ]
 
             await self.message_service.add_user_message(user_message)
-            messages = (
-                await self.message_service.get_messages()
-            )
-            
-            print(messages)
-            response = openai.chat.completions.create(
-                model=self.model,
-                tool_choice="auto",
-                tools=self.tools,
-                messages=messages,
-                max_tokens=150,
-                stream=True,
-            )
+            messages = await self.message_service.get_messages()
 
-            assistant_message = ""
-            finish_reason = ""
-            tool_calls = {}
+            loop_count = 0
+            max_loops = 5
 
-            for chunk in response:
-                choice = chunk.choices[0]
-                delta = choice.delta
-                finish_reason = choice.finish_reason
+            while loop_count < max_loops:
+                loop_count += 1
 
-                # Check if delta has content and yield it
-                if hasattr(delta, "content") and delta.content:
-                    assistant_message += delta.content
-                    yield delta.content
+                response = openai.chat.completions.create(
+                    model=self.model,
+                    tool_choice="auto",
+                    tools=self.tools,
+                    messages=messages,
+                    max_tokens=150,
+                    stream=True,
+                )
 
-                # Handle tool calls within the chunks
-                self.handle_chunk_tool_calls(tool_calls, delta)
+                assistant_message = ""
+                finish_reason = ""
+                tool_calls = {}
+
+                for chunk in response:
+                    choice = chunk.choices[0]
+                    delta = choice.delta
+                    finish_reason = choice.finish_reason
+
+                    # Check if delta has content and yield it
+                    if hasattr(delta, "content") and delta.content:
+                        assistant_message += delta.content
+                        yield delta.content
+
+                    # Handle tool calls within the chunks
+                    self.handle_chunk_tool_calls(tool_calls, delta)
 
                 if finish_reason == "tool_calls":
                     # Save the assistant's decision to call a tool
-                    print(f"Tool calls: {tool_calls}")
                     await self.save_tool_call(tool_calls)
 
                     # Process the tool calls
@@ -157,18 +158,11 @@ class CinemaAIChat:
                     # Save the tool call results
                     await self.save_tool_results(tool_results)
 
-                    ### TODO: resend to model to get the final response
-                    # # Generate the final assistant response using the tool results
-                    # for result in tool_results:
-                    #     assistant_response = (
-                    #         f"Here is what I found:\n{result['result']}"
-                    #     )
-                    #     await self.message_service.add_assistant_message(
-                    #         assistant_response
-                    #     )
+                    # Update the messages list with the tool results
+                    messages = await self.message_service.get_messages()
 
-                    # End processing here to avoid infinite loop
-                    return
+                    # Continue the loop to send the tool results back to OpenAI for further processing
+                    continue
 
                 if finish_reason == "stop":
                     break
