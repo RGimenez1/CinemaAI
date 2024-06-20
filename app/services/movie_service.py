@@ -19,7 +19,7 @@ async def search_movies(
             "title": title,
             "genres": genres,
             "year": year,
-            "director": director,
+            "directors": director,
             "cast_member": cast_member,
             "page": page,
             "size": size,
