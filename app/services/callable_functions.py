@@ -38,6 +38,9 @@ class CallableFunctions:
         movies = await search_movies(title, genres, year, director, cast_member)
 
         movies = [movie.to_dict() for movie in movies]
-        print(f"movies: {movies}")
 
+        if not movies:
+            return "No movies found. Ask the user if you could help find another movie."
+
+        print(f"movies: {movies}")
         return movies
