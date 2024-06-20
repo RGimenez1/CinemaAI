@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Body
 from fastapi.responses import StreamingResponse
 from app.models.requests.chat_request import ChatRequest
-from app.services.chat_service import CinemaAIChat
+from app.services.chat_service import ChatService
 
 router = APIRouter()
 
@@ -17,7 +17,7 @@ async def chat_endpoint(request_body: ChatRequest):
         message = request_body.message
 
         # Create an instance of CinemaAIChat
-        ai_chat = CinemaAIChat(context_id)
+        ai_chat = ChatService(context_id)
 
         # Define the async generator for streaming the response
         async def response_generator():
