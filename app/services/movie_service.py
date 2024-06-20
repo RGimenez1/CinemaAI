@@ -1,46 +1,43 @@
-from pydantic import ValidationError
-from app.repositories.database import movies_collection, build_search_query
-from app.models.movie import Movie
 from typing import List, Optional
-from bson import ObjectId
-from datetime import datetime
-import logging
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+from fastapi import HTTPException
+from app.models.movie import Movie
+from app.repositories.database import get_movies_from_db
 
 
 async def search_movies(
-    title: Optional[str] = None,
-    genres: Optional[List[str]] = None,
-    year: Optional[int] = None,
-    director: Optional[str] = None,
-    cast_member: Optional[str] = None,
+    title: Optional[str],
+    genres: Optional[List[str]],
+    year: Optional[int],
+    director: Optional[str],
+    cast_member: Optional[str],
+    page: int,
+    size: int,
 ) -> List[Movie]:
-    query = build_search_query(title, genres, year, director, cast_member)
-
     try:
-        movies = await movies_collection.find(query).to_list(20)
-    except Exception as e:
-        logging.error(f"Error fetching movies from the database: {e}")
-        return []  # Return an empty list if the database query fails
+        # Build query parameters dictionary
+        query_params = {
+            "title": title,
+            "genres": genres,
+            "year": year,
+            "director": director,
+            "cast_member": cast_member,
+            "page": page,
+            "size": size,
+        }
 
-    results = []
-    for movie in movies:
-        # Convert ObjectId to string
-        if "_id" in movie and isinstance(movie["_id"], ObjectId):
-            movie["_id"] = str(movie["_id"])
+        # Fetch movies using the repository layer
+        movies = await get_movies_from_db(query_params)
 
-        # Convert datetime fields to ISO format strings
-        if "released" in movie and isinstance(movie["released"], datetime):
-            movie["released"] = movie["released"].isoformat()
-
-        try:
-            # Append the movie to results after conversion
-            results.append(Movie(**movie))
-        except ValidationError as e:
-            logging.error(
-                f"Error converting movie {movie.get('title', 'unknown')}: {e}"
+        if not movies:
+            # Raise a 404 exception if no movies are found
+            raise HTTPException(
+                status_code=404, detail="No movies found with the given filters"
             )
 
-    return results
+        return movies
+
+    except HTTPException as e:
+        # Re-raise the HTTPException for proper status code handling
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Service Error: {e}")
