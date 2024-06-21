@@ -2,7 +2,7 @@
 
 Welcome to **CinemaAI** – your ultimate AI-powered companion for discovering and discussing movies! Whether you're a movie enthusiast looking for the next film to watch or a developer exploring AI and web technologies, CinemaAI offers an immersive and intuitive experience.
 
-<img src="./app/static/cinemaAI_logo.webp" alt="CinemaAI Logo" width="200" style="border-radius: 50%">
+<img src="./app/static/cinemaAI_logo_rounded.webp" alt="CinemaAI Logo" width="200">
 
 ## What is CinemaAI?
 
