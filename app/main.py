@@ -77,6 +77,11 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
 
 
 # Endpoint to serve the home page
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.get("/playground", include_in_schema=False)
+async def read_playground(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
