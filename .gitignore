@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+#Collections
+.mongodb_base_collections
+
 #vscode
 .vscode/
 /page.html
