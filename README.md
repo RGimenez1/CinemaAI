@@ -134,6 +134,7 @@ Follow these steps to set up and run CinemaAI on your local machine.
    Important factors:
    1- Model used is currently GPT-4o. May be upgraded as new models are released.
    2- We do **NOT** store, track, use or are responsible for api keys in ANY way, shape or form.
+   3- Monitor your usage on OpenAIs platform.
 
 ### API Endpoints
 
