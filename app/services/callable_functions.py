@@ -13,7 +13,7 @@ class CallableFunctions:
         """
         pass  # No parameters needed for initialization
 
-    def _parse_params(self, params):
+    def _parse_params(self, params: str) -> dict:
         """
         Parse the parameters string to a JSON dictionary.
         Assumes the input is always a valid JSON string.
@@ -23,7 +23,7 @@ class CallableFunctions:
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON string: {e}")
 
-    async def movie_searcher(self, arguments):
+    async def movie_searcher(self, arguments: str):
         """
         Searches for movies based on the given arguments.
         Arguments are passed as a JSON string.
@@ -35,9 +35,9 @@ class CallableFunctions:
         director = params.get("director")
         cast_member = params.get("cast_member")
 
-        # Maximum movies it will return is 10
+        # To many movies may be returned, so limit the search to size=X
         movies = await search_movies(
-            title, genres, year, director, cast_member, page=1, size=10
+            title, genres, year, director, cast_member, page=1, size=50
         )
 
         movies = [movie.to_dict() for movie in movies]
@@ -45,5 +45,19 @@ class CallableFunctions:
         if not movies:
             return "No movies found. Ask the user if you could help find another movie."
 
-        print(f"movies: {movies}")
         return movies
+
+    async def execute_tool(self, function_name: str, arguments: str):
+        """
+        Executes the specified tool function with the given arguments.
+        """
+        try:
+            # Dynamically get the method from the instance using function_name
+            tool_function = getattr(self, function_name, None)
+            if tool_function and callable(tool_function):
+                # Call the tool function with the provided arguments
+                return await tool_function(arguments)
+            else:
+                raise ValueError(f"Tool function '{function_name}' not found.")
+        except Exception as e:
+            return {"error": str(e)}
