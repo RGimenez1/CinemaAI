@@ -25,19 +25,11 @@ async def read_movies(
             status_code=400, detail="At least one filter must be provided"
         )
 
-    try:
-        movies = await search_movies(
-            title, genres, year, director, cast_member, page, size
-        )
+    movies = await search_movies(title, genres, year, director, cast_member, page, size)
 
-        if not movies:
-            raise HTTPException(
-                status_code=404, detail="No movies found with the given filters"
-            )
-
-        return movies
-
-    except Exception as e:
+    if not movies:
         raise HTTPException(
-            status_code=500, detail=f"An error occurred while searching for movies: {e}"
+            status_code=404, detail="No movies found with the given filters"
         )
+
+    return movies
