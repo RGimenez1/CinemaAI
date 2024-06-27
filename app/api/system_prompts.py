@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query, HTTPException
-from app.core.utils import get_system_prompt, get_tool
+from app.core.utils.system_prompts_utils import get_system_prompt, get_tool
 from app.core.config import settings
 
 router = APIRouter()

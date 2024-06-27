@@ -7,7 +7,7 @@ from app.repositories.database import get_movies_from_db
 async def search_movies(
     title: Optional[str],
     genres: Optional[List[str]],
-    year: Optional[int],
+    year: Optional[str],
     director: Optional[str],
     cast_member: Optional[str],
     page: int,
