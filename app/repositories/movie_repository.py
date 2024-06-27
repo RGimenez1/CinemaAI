@@ -39,6 +39,21 @@ async def get_movies_from_db(query_params: Dict) -> List[Movie]:
         if query_params.get("cast_member"):
             query["cast"] = {"$regex": query_params["cast_member"], "$options": "i"}
 
+        if query_params.get("countries"):
+            query["countries"] = {"$in": query_params["countries"]}
+
+        if query_params.get("imdb_rating"):
+            query["imdb.rating"] = {"$gte": query_params["imdb_rating"]}
+
+        if query_params.get("oscars"):
+            query["awards.text"] = {"$regex": "Oscar", "$options": "i"}
+
+        if query_params.get("best_actor"):
+            query["awards.text"] = {
+                "$regex": f"Best Actor.*{query_params['best_actor']}",
+                "$options": "i",
+            }
+
         # Apply pagination
         offset = (query_params["page"] - 1) * query_params["size"]
         limit = query_params["size"]

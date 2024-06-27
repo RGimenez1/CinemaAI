@@ -10,6 +10,10 @@ async def search_movies(
     year: Optional[str],
     director: Optional[str],
     cast_member: Optional[str],
+    countries: Optional[List[str]],
+    imdb_rating: Optional[float],
+    oscars: Optional[bool],
+    best_actor: Optional[str],
     page: int,
     size: int,
 ) -> List[Movie]:
@@ -21,6 +25,10 @@ async def search_movies(
             "year": year,
             "directors": director,
             "cast_member": cast_member,
+            "countries": countries,
+            "imdb_rating": imdb_rating,
+            "oscars": oscars,
+            "best_actor": best_actor,
             "page": page,
             "size": size,
         }

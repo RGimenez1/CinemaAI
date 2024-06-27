@@ -38,24 +38,3 @@ async def get_tools(
         raise HTTPException(status_code=404, detail=tool_content["error"])
 
     return {"version": tool_version, "content": tool_content}
-
-
-@router.get("/tools")
-async def get_tools(
-    version: int = Query(None, description="The version of the tool to fetch")
-):
-    """
-    Endpoint to fetch the tool information based on the provided version.
-    If no version is provided, use the default version from the configuration.
-    """
-    try:
-        # Use the provided version or fallback to the default version from the config
-        tool_version = version if version is not None else int(settings.TOOL_VERSION)
-        tool_content = get_tool(tool_version)
-
-        if "error" in tool_content:
-            raise HTTPException(status_code=404, detail=tool_content["error"])
-
-        return {"version": tool_version, "content": tool_content}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))

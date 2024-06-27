@@ -1,7 +1,6 @@
 import json
 from app.services.movie_service import search_movies
 
-
 class CallableFunctions:
     """
     A class to handle callable functions with JSON string arguments.
@@ -34,18 +33,31 @@ class CallableFunctions:
         year = params.get("year")
         director = params.get("director")
         cast_member = params.get("cast_member")
+        countries = params.get("countries")
+        imdb_rating = params.get("imdb_rating")
+        oscars = params.get("oscars")
+        best_actor = params.get("best_actor")
+        page = params.get("page", 1)
+        size = params.get("size", 10)
 
-        # To many movies may be returned, so limit the search to size=X
         movies = await search_movies(
-            title, genres, year, director, cast_member, page=1, size=50
+            title,
+            genres,
+            year,
+            director,
+            cast_member,
+            countries,
+            imdb_rating,
+            oscars,
+            best_actor,
+            page,
+            size,
         )
-
-        movies = [movie.to_dict() for movie in movies]
 
         if not movies:
             return "No movies found. Ask the user if you could help find another movie."
 
-        return movies
+        return [movie.to_dict() for movie in movies]
 
     async def execute_tool(self, function_name: str, arguments: str):
         """

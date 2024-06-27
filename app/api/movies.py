@@ -16,6 +16,21 @@ async def read_movies(
     ),
     director: Optional[str] = Query(None, description="Director to search for"),
     cast_member: Optional[str] = Query(None, description="Cast member to search for"),
+    countries: Optional[List[str]] = Query(
+        None, description="Countries where the movie was produced"
+    ),
+
+    imdb_rating: Optional[float] = Query(
+        None, description="Minimum IMDb rating to search for"
+    ),
+
+    oscars: Optional[bool] = Query(
+        None, description="Filter for movies nominated for or awarded an Oscar"
+    ),
+    best_actor: Optional[str] = Query(
+        None,
+        description="Filter for movies awarded for Best Actor, with the actor's name",
+    ),
     page: int = Query(1, gt=0, description="Page number for pagination"),
     size: int = Query(10, gt=0, le=100, description="Number of movies per page"),
 ):
@@ -23,12 +38,37 @@ async def read_movies(
     Search for movies based on various filters. At least one filter must be provided.
     Pagination is supported through 'page' and 'size' parameters.
     """
-    if all(param is None for param in [title, genres, year, director, cast_member]):
+    if all(
+        param is None
+        for param in [
+            title,
+            genres,
+            year,
+            director,
+            cast_member,
+            countries,
+            imdb_rating,
+            oscars,
+            best_actor,
+        ]
+    ):
         raise HTTPException(
             status_code=400, detail="At least one filter must be provided"
         )
 
-    movies = await search_movies(title, genres, year, director, cast_member, page, size)
+    movies = await search_movies(
+        title,
+        genres,
+        year,
+        director,
+        cast_member,
+        countries,
+        imdb_rating,
+        oscars,
+        best_actor,
+        page,
+        size,
+    )
 
     if not movies:
         raise HTTPException(
