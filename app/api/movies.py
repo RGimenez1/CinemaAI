@@ -27,11 +27,7 @@ async def read_movies(
     oscars: Optional[bool] = Query(
         None, description="Filter for movies nominated for or awarded an Oscar"
     ),
-    best_actor: Optional[str] = Query(
-        None,
-        description="Filter for movies awarded for Best Actor, with the actor's name",
-    ),
-    size: int = Query(100, gt=0, le=100, description="Number of movies per search"),
+    size: int = Query(10, gt=0, le=100, description="Number of movies per search"),
 ):
     """
     Search for movies based on various filters. At least one filter must be provided.
@@ -47,7 +43,6 @@ async def read_movies(
             countries,
             imdb_rating,
             oscars,
-            best_actor,
         ]
     ):
         raise HTTPException(
@@ -63,7 +58,6 @@ async def read_movies(
         countries,
         imdb_rating,
         oscars,
-        best_actor,
         size,
     )
 

@@ -48,11 +48,6 @@ async def get_movies_from_db(query_params: Dict, size: int) -> List[Movie]:
         if query_params.get("oscars"):
             query["awards.text"] = {"$regex": "Oscar", "$options": "i"}
 
-        if query_params.get("best_actor"):
-            query["awards.text"] = {
-                "$regex": f"Best Actor.*{query_params['best_actor']}",
-                "$options": "i",
-            }
 
         # Apply limit
         cursor = database["movies"].find(query).limit(size)

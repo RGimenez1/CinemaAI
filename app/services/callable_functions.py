@@ -38,7 +38,6 @@ class CallableFunctions:
         countries = params.get("countries")
         imdb_rating = params.get("imdb_rating")
         oscars = params.get("oscars")
-        best_actor = params.get("best_actor")
 
         movies = await search_movies(
             title,
@@ -49,7 +48,6 @@ class CallableFunctions:
             countries,
             imdb_rating,
             oscars,
-            best_actor,
         )
 
         if not movies:
