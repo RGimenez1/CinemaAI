@@ -53,14 +53,28 @@ class CallableFunctions:
         if not movies:
             return "No movies found. Ask the user if you could help find another movie."
 
+        MIN_VOTES_THRESHOLD = (
+            10000  # Adjust this value as needed - This will remove less relevant movies
+        )
+
+        # Filter movies that have at least the minimum number of votes
+        filtered_movies = [
+            movie
+            for movie in movies
+            if movie.imdb
+            and movie.imdb.votes
+            and movie.imdb.votes >= MIN_VOTES_THRESHOLD
+        ]
+
         # Sort movies by IMDb rating in descending order and get the top 5
-        # This is what the AI model will consider
         sorted_movies = sorted(
-            movies,
+            filtered_movies,
             key=lambda x: (x.imdb.rating if x.imdb and x.imdb.rating else 0),
             reverse=True,
         )
         top_movies = sorted_movies[:5]
+
+        return [movie.to_dict() for movie in top_movies]
 
         return [movie.to_dict() for movie in top_movies]
 
