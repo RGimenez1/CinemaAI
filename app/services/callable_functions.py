@@ -76,8 +76,6 @@ class CallableFunctions:
 
         return [movie.to_dict() for movie in top_movies]
 
-        return [movie.to_dict() for movie in top_movies]
-
     async def execute_tool(self, function_name: str, arguments: str):
         """
         Executes the specified tool function with the given arguments.

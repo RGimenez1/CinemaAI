@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Body
+from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from app.models.requests.chat_request import ChatRequest
 from app.services.chat_service import ChatService
