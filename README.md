@@ -60,9 +60,9 @@ CinemaAI is powered by a robust stack of modern technologies:
 
 ## Demo
 
-Experience CinemaAI in action: [CinemaAI Live Demo](#) (Link to a live demo or video walkthrough)
+Experience CinemaAI in action:
 
-![CinemaAI Screenshot](./app/static/screenshot.png)
+<img src="./app/static/cinemaAI_demo.gif" alt="CinemaAI Demo" width="800">
 
 ## Getting Started
 
@@ -86,7 +86,7 @@ Follow these steps to set up and run CinemaAI on your local machine.
 
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scriptsctivate`
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
    ```
 
 3. **Install Dependencies**:

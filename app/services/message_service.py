@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from app.repositories.database import database
+from app.repositories.movie_repository import database
 from app.models.enums.roles import Roles
 from pymongo.collection import Collection
 

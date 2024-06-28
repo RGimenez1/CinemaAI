@@ -1,17 +1,19 @@
 from typing import List, Optional
 from fastapi import HTTPException
 from app.models.movie import Movie
-from app.repositories.database import get_movies_from_db
+from app.repositories.movie_repository import get_movies_from_db
 
 
 async def search_movies(
     title: Optional[str],
     genres: Optional[List[str]],
-    year: Optional[int],
+    year: Optional[str],
     director: Optional[str],
     cast_member: Optional[str],
-    page: int,
-    size: int,
+    countries: Optional[List[str]],
+    imdb_rating: Optional[float],
+    oscars: Optional[bool],
+    size: int = 999999,
 ) -> List[Movie]:
     try:
         # Build query parameters dictionary
@@ -21,12 +23,14 @@ async def search_movies(
             "year": year,
             "directors": director,
             "cast_member": cast_member,
-            "page": page,
+            "countries": countries,
+            "imdb_rating": imdb_rating,
+            "oscars": oscars,
             "size": size,
         }
 
         # Fetch movies using the repository layer
-        movies = await get_movies_from_db(query_params)
+        movies = await get_movies_from_db(query_params, size)
 
         if not movies:
             # Raise a 404 exception if no movies are found

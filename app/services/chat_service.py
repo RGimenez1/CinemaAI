@@ -1,6 +1,6 @@
 import uuid
 from app.core.config import settings
-from app.core.utils import get_system_prompt, get_tool
+from app.core.utils.system_prompts_utils import get_system_prompt, get_tool
 from app.services.message_service import MessageService
 from app.services.callable_functions import CallableFunctions
 from app.repositories.ai_repository import AIRepository

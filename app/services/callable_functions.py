@@ -29,23 +29,52 @@ class CallableFunctions:
         Arguments are passed as a JSON string.
         """
         params = self._parse_params(arguments)
+        print(f"Movie Searcher Arguments: {params}")
         title = params.get("title")
         genres = params.get("genres")
         year = params.get("year")
         director = params.get("director")
         cast_member = params.get("cast_member")
+        countries = params.get("countries")
+        imdb_rating = params.get("imdb_rating")
+        oscars = params.get("oscars")
 
-        # To many movies may be returned, so limit the search to size=X
         movies = await search_movies(
-            title, genres, year, director, cast_member, page=1, size=50
+            title,
+            genres,
+            year,
+            director,
+            cast_member,
+            countries,
+            imdb_rating,
+            oscars,
         )
-
-        movies = [movie.to_dict() for movie in movies]
 
         if not movies:
             return "No movies found. Ask the user if you could help find another movie."
 
-        return movies
+        MIN_VOTES_THRESHOLD = (
+            10000  # Adjust this value as needed - This will remove less relevant movies
+        )
+
+        # Filter movies that have at least the minimum number of votes
+        filtered_movies = [
+            movie
+            for movie in movies
+            if movie.imdb
+            and movie.imdb.votes
+            and movie.imdb.votes >= MIN_VOTES_THRESHOLD
+        ]
+
+        # Sort movies by IMDb rating in descending order and get the top 5
+        sorted_movies = sorted(
+            filtered_movies,
+            key=lambda x: (x.imdb.rating if x.imdb and x.imdb.rating else 0),
+            reverse=True,
+        )
+        top_movies = sorted_movies[:5]
+
+        return [movie.to_dict() for movie in top_movies]
 
     async def execute_tool(self, function_name: str, arguments: str):
         """
