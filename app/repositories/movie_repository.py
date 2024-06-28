@@ -8,7 +8,7 @@ client = AsyncIOMotorClient(settings.MONGO_URI)
 database = client[settings.MONGO_DB_NAME]
 
 
-async def get_movies_from_db(query_params: Dict) -> List[Movie]:
+async def get_movies_from_db(query_params: Dict, size: int) -> List[Movie]:
     try:
         query = {}
 
@@ -54,13 +54,9 @@ async def get_movies_from_db(query_params: Dict) -> List[Movie]:
                 "$options": "i",
             }
 
-        # Apply pagination
-        offset = (query_params["page"] - 1) * query_params["size"]
-        limit = query_params["size"]
-
-        movies_collection = database["movies"]
-        cursor = movies_collection.find(query).skip(offset).limit(limit)
-        results = await cursor.to_list(length=limit)
+        # Apply limit
+        cursor = database["movies"].find(query).limit(size)
+        results = await cursor.to_list(length=size)
 
         # Convert MongoDB ObjectId to string, clean data, and return as Pydantic models
         movies = []

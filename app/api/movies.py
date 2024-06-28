@@ -31,12 +31,10 @@ async def read_movies(
         None,
         description="Filter for movies awarded for Best Actor, with the actor's name",
     ),
-    page: int = Query(1, gt=0, description="Page number for pagination"),
-    size: int = Query(10, gt=0, le=100, description="Number of movies per page"),
+    size: int = Query(100, gt=0, le=100, description="Number of movies per search"),
 ):
     """
     Search for movies based on various filters. At least one filter must be provided.
-    Pagination is supported through 'page' and 'size' parameters.
     """
     if all(
         param is None
@@ -66,7 +64,6 @@ async def read_movies(
         imdb_rating,
         oscars,
         best_actor,
-        page,
         size,
     )
 

@@ -14,8 +14,7 @@ async def search_movies(
     imdb_rating: Optional[float],
     oscars: Optional[bool],
     best_actor: Optional[str],
-    page: int,
-    size: int,
+    size: int = 100,  # Default size to 100 if not provided
 ) -> List[Movie]:
     try:
         # Build query parameters dictionary
@@ -29,12 +28,11 @@ async def search_movies(
             "imdb_rating": imdb_rating,
             "oscars": oscars,
             "best_actor": best_actor,
-            "page": page,
             "size": size,
         }
 
         # Fetch movies using the repository layer
-        movies = await get_movies_from_db(query_params)
+        movies = await get_movies_from_db(query_params, size)
 
         if not movies:
             # Raise a 404 exception if no movies are found

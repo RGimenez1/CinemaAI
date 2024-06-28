@@ -1,6 +1,7 @@
 import json
 from app.services.movie_service import search_movies
 
+
 class CallableFunctions:
     """
     A class to handle callable functions with JSON string arguments.
@@ -28,6 +29,7 @@ class CallableFunctions:
         Arguments are passed as a JSON string.
         """
         params = self._parse_params(arguments)
+        print(f"Movie Searcher Arguments: {params}")
         title = params.get("title")
         genres = params.get("genres")
         year = params.get("year")
@@ -37,8 +39,6 @@ class CallableFunctions:
         imdb_rating = params.get("imdb_rating")
         oscars = params.get("oscars")
         best_actor = params.get("best_actor")
-        page = params.get("page", 1)
-        size = params.get("size", 10)
 
         movies = await search_movies(
             title,
@@ -50,8 +50,6 @@ class CallableFunctions:
             imdb_rating,
             oscars,
             best_actor,
-            page,
-            size,
         )
 
         if not movies:
