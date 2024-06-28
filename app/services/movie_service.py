@@ -13,7 +13,7 @@ async def search_movies(
     countries: Optional[List[str]],
     imdb_rating: Optional[float],
     oscars: Optional[bool],
-    size: int = 10,  # Default size to 100 if not provided
+    size: int = 10000, 
 ) -> List[Movie]:
     try:
         # Build query parameters dictionary

@@ -21,7 +21,7 @@ class AIRepository:
             response = openai.chat.completions.create(
                 model=self.model,
                 messages=messages,
-                max_tokens=500,
+                max_tokens=1000,
                 stream=True,
                 tools=tools,
                 tool_choice="auto",

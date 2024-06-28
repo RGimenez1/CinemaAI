@@ -53,7 +53,16 @@ class CallableFunctions:
         if not movies:
             return "No movies found. Ask the user if you could help find another movie."
 
-        return [movie.to_dict() for movie in movies]
+        # Sort movies by IMDb rating in descending order and get the top 5
+        # This is what the AI model will consider
+        sorted_movies = sorted(
+            movies,
+            key=lambda x: (x.imdb.rating if x.imdb and x.imdb.rating else 0),
+            reverse=True,
+        )
+        top_movies = sorted_movies[:5]
+
+        return [movie.to_dict() for movie in top_movies]
 
     async def execute_tool(self, function_name: str, arguments: str):
         """
