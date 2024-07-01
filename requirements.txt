@@ -49,3 +49,5 @@ virtualenv==20.26.2
 watchfiles==0.22.0
 websockets==12.0
 tiktoken
+sqlalchemy
+asyncpg
