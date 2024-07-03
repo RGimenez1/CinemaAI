@@ -10,11 +10,14 @@ from app.api.cinema import router as cinema_router
 from pydantic import BaseModel, ValidationError
 import logging
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 # Initialize the FastAPI application
 app = FastAPI()
+app.servers = [
+    {"url": "http://localhost:8000", "description": "API Server"},
+    # Add more servers as needed
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
