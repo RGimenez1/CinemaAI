@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import FastAPI, HTTPException, Path, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -11,6 +11,7 @@ from app.api.chat import router as chat_router
 from app.api.system_prompts import router as prompts_router
 from app.api.cinema import router as cinema_router
 from app.api.tool_caller import router as tool_caller_router
+from pathlib import Path  # Ensure this is imported correctly
 
 # Initialize the FastAPI application
 app = FastAPI()
@@ -46,17 +47,17 @@ app.include_router(prompts_router, prefix="/api")
 app.include_router(cinema_router, prefix="/api")
 app.include_router(tool_caller_router, prefix="/api")
 
-
 # Setup the templates directory
 templates = Jinja2Templates(directory="app/templates")
+
+# Mount static files
+app.mount(
+    "/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static"
+)
 
 # Set up logging configuration
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-
-app.mount(
-    "/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static"
 )
 
 
