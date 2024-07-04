@@ -1,6 +1,7 @@
 from typing import Optional
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Path, Request
 from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, ValidationError
 import logging
@@ -32,6 +33,12 @@ async def root():
     return RedirectResponse(url="/docs")
 
 
+# Redirect playground to index.html
+@app.get("/playground", include_in_schema=False)
+async def read_playground(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
 # Include the movie and chat routers
 app.include_router(movie_router, prefix="/api")
 app.include_router(chat_router, prefix="/api")
@@ -46,6 +53,10 @@ templates = Jinja2Templates(directory="app/templates")
 # Set up logging configuration
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+
+app.mount(
+    "/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static"
 )
 
 
