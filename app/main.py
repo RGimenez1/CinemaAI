@@ -25,6 +25,13 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
+
+# Redirect root URL to /docs
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/docs")
+
+
 # Include the movie and chat routers
 app.include_router(movie_router, prefix="/api")
 app.include_router(chat_router, prefix="/api")
@@ -75,9 +82,3 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
         status_code=422,
         content=ErrorResponse(message="Validation Error", errors=exc.errors()).dict(),
     )
-
-
-# Redirect root URL to /docs
-@app.get("/", include_in_schema=False)
-async def root():
-    return RedirectResponse(url="/docs")
