@@ -37,9 +37,9 @@ async def root():
 
 
 # Include the movie and chat routers
-app.include_router(movie_router, prefix="/movies", tags=["movies"])
-app.include_router(cinema_router, prefix="/cinema", tags=["cinema"])
-app.include_router(tool_caller_router, prefix="/tool", tags=["tool"])
+app.include_router(movie_router, prefix="/movies", tags=["Movies"])
+app.include_router(cinema_router, prefix="/cinema", tags=["Cinema"])
+app.include_router(tool_caller_router, prefix="/tool", tags=["AI Tools"])
 
 # Setup the templates directory
 templates = Jinja2Templates(directory="app/templates")
