@@ -6,19 +6,21 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, ValidationError
 import logging
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import settings
+from pathlib import Path  # Ensure this is imported correctly
 from app.api.movies import router as movie_router
-from app.api.chat import router as chat_router
-from app.api.system_prompts import router as prompts_router
 from app.api.cinema import router as cinema_router
 from app.api.tool_caller import router as tool_caller_router
-from pathlib import Path  # Ensure this is imported correctly
 
 # Initialize the FastAPI application
 app = FastAPI()
-# app.servers = [
-#     {"url": "http://localhost:8000", "description": "API Server"},
-#     # Add more servers as needed
-# ]
+
+# Dynamically set the servers
+app.servers = [
+    {"url": settings.SERVER_HOST, "description": "API Server"},
+    # Add more servers as needed
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
@@ -34,18 +36,10 @@ async def root():
     return RedirectResponse(url="/docs")
 
 
-# Redirect playground to index.html
-@app.get("/playground", include_in_schema=False)
-async def read_playground(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
-
 # Include the movie and chat routers
-app.include_router(movie_router, prefix="/api")
-app.include_router(chat_router, prefix="/api")
-app.include_router(prompts_router, prefix="/api")
-app.include_router(cinema_router, prefix="/api")
-app.include_router(tool_caller_router, prefix="/api")
+app.include_router(movie_router, prefix="/movies", tags=["movies"])
+app.include_router(cinema_router, prefix="/cinema", tags=["cinema"])
+app.include_router(tool_caller_router, prefix="/tool", tags=["tool"])
 
 # Setup the templates directory
 templates = Jinja2Templates(directory="app/templates")

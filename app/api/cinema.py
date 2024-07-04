@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_session
 from app.models.cinema import CinemaPreference, StatusEnum
 from app.repositories.cinema_repository import CinemaRepository
-from pydantic import BaseModel, Field, field_validator, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Literal
 from uuid import UUID
 
@@ -25,7 +25,12 @@ class CinemaPreferenceCreate(BaseModel):
         return v
 
 
-@router.post("/cinema_preferences", response_model=CinemaPreferenceCreate)
+@router.post(
+    "/cinema_preferences",
+    response_model=CinemaPreferenceCreate,
+    summary="Posts a new entry to cinema preferences by user id",
+    description="Add movie or serie to user cinema preferences",
+)
 async def create_cinema_preference(
     preference: CinemaPreferenceCreate, session: AsyncSession = Depends(get_session)
 ):
@@ -35,7 +40,10 @@ async def create_cinema_preference(
 
 
 @router.get(
-    "/cinema_preferences/{user_id}", response_model=List[CinemaPreferenceCreate]
+    "/cinema_preferences/{user_id}",
+    response_model=List[CinemaPreferenceCreate],
+    summary="Get cinema preferences by user id",
+    description="Gets movies and series user cinema preferences",
 )
 async def get_cinema_preferences(
     user_id: UUID, session: AsyncSession = Depends(get_session)

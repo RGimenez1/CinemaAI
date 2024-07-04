@@ -14,20 +14,21 @@ class Settings:
     MONGO_URI = f"mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_CLUSTER_URL}/{MONGO_DB_NAME}?retryWrites=true&w=majority"
 
     # OpenAI
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    OPENAI_MODEL = os.getenv("OPENAI_MODEL")
+    # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    # OPENAI_MODEL = os.getenv("OPENAI_MODEL")
 
     # Supabase
     DATABASE_URL = os.getenv("DATABASE_URL")
     SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
     SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-
-    # JWT
     JWT_SECRET = os.getenv("JWT_SECRET")
 
     # Prompts
-    SYSTEM_PROMPT_VERSION = os.getenv("SYSTEM_PROMPT_VERSION")
-    TOOL_VERSION = os.getenv("TOOL_VERSION")
+    # SYSTEM_PROMPT_VERSION = os.getenv("SYSTEM_PROMPT_VERSION")
+    # TOOL_VERSION = os.getenv("TOOL_VERSION")
+    
+    # Server
+    SERVER_HOST = os.getenv("SERVER_HOST")
 
 
 settings = Settings()
