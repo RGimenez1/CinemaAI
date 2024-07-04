@@ -1,28 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.infrastructure.db.session import get_session
-from app.domain.models.cinema import CinemaPreference, StatusEnum
+from app.domain.models.cinema import CinemaPreference
 from app.infrastructure.repositories.cinema_repository import CinemaRepository
-from pydantic import BaseModel, Field, field_validator
-from typing import List, Literal
+from app.domain.models.cinema import CinemaPreferenceCreate
+from typing import List
 from uuid import UUID
 
 router = APIRouter()
-
-
-class CinemaPreferenceCreate(BaseModel):
-    user_id: UUID
-    title: str
-    year: int
-    type: Literal["movie", "series"]
-    genre: List[str]
-    status: str = Field(...)
-
-    @field_validator("status")
-    def validate_status(cls, v):
-        if v not in [status.value for status in StatusEnum]:
-            raise ValueError(f"Invalid status: {v}")
-        return v
 
 
 @router.post(
