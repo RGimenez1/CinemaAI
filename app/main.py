@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, ValidationError
 import logging
@@ -31,6 +31,12 @@ app.include_router(chat_router, prefix="/api")
 app.include_router(prompts_router, prefix="/api")
 app.include_router(cinema_router, prefix="/api")
 app.include_router(tool_caller_router, prefix="/api")
+
+
+# Redirect root URL to /docs
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/docs")
 
 
 # Setup the templates directory
