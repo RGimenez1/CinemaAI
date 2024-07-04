@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing import List, Optional
 from app.services.movie_service import search_movies
-from app.models.movie import Movie
+from app.domain.models.movie import Movie
 
 router = APIRouter()
 
@@ -19,11 +19,9 @@ async def read_movies(
     countries: Optional[List[str]] = Query(
         None, description="Countries where the movie was produced"
     ),
-
     imdb_rating: Optional[float] = Query(
         None, description="Minimum IMDb rating to search for"
     ),
-
     oscars: Optional[bool] = Query(
         None, description="Filter for movies nominated for or awarded an Oscar"
     ),

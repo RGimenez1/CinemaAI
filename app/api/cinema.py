@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.db.session import get_session
-from app.models.cinema import CinemaPreference, StatusEnum
-from app.repositories.cinema_repository import CinemaRepository
+from app.infrastructure.db.session import get_session
+from app.domain.models.cinema import CinemaPreference, StatusEnum
+from app.infrastructure.repositories.cinema_repository import CinemaRepository
 from pydantic import BaseModel, Field, field_validator
 from typing import List, Literal
 from uuid import UUID

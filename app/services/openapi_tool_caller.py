@@ -1,7 +1,7 @@
 import logging
 from typing import Any, Dict
 from pydantic import ValidationError
-from app.repositories.openapi_repository import OpenAPIRepository
+from app.infrastructure.repositories.openapi_repository import OpenAPIRepository
 
 
 class OpenAPIToolCaller:

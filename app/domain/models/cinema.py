@@ -1,3 +1,6 @@
+from pydantic import BaseModel, Field, field_validator
+from uuid import UUID
+from typing import List, Literal
 from sqlalchemy import (
     Column,
     Integer,
@@ -8,19 +11,26 @@ from sqlalchemy import (
     func,
     CheckConstraint,
 )
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID as SQLUUID
 from sqlalchemy.orm import relationship, declarative_base
-import enum
+from app.domain.value_objects.status_enum import StatusEnum
 
 Base = declarative_base()
 
 
-class StatusEnum(enum.Enum):
-    liked = "liked"
-    loved = "loved"
-    disliked = "disliked"
-    strongly_disliked = "strongly_disliked"
-    to_watch = "to_watch"
+class CinemaPreferenceCreate(BaseModel):
+    user_id: UUID
+    title: str
+    year: int
+    type: Literal["movie", "series"]
+    genre: List[str]
+    status: str = Field(...)
+
+    @field_validator("status")
+    def validate_status(cls, v):
+        if v not in [status.value for status in StatusEnum]:
+            raise ValueError(f"Invalid status: {v}")
+        return v
 
 
 class CinemaPreference(Base):
@@ -33,7 +43,7 @@ class CinemaPreference(Base):
         {"schema": "public"},
     )
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("auth.users.id"), nullable=False)
+    user_id = Column(SQLUUID(as_uuid=True), ForeignKey("auth.users.id"), nullable=False)
     title = Column(String, nullable=False)
     year = Column(Integer, nullable=False)
     type = Column(String, nullable=False)
@@ -53,5 +63,5 @@ class CinemaPreference(Base):
 class User(Base):
     __tablename__ = "users"
     __table_args__ = {"schema": "auth"}
-    id = Column(UUID(as_uuid=True), primary_key=True)
+    id = Column(SQLUUID(as_uuid=True), primary_key=True)
     preferences = relationship("CinemaPreference", back_populates="user")

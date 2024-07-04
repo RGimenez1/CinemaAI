@@ -1,5 +1,5 @@
 from typing import List, Dict
-from app.models.movie import Movie
+from app.domain.models.movie import Movie
 from app.core.config import settings
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.core.utils.data_preprocess_utils import clean_data
@@ -47,7 +47,6 @@ async def get_movies_from_db(query_params: Dict, size: int) -> List[Movie]:
 
         if query_params.get("oscars"):
             query["awards.text"] = {"$regex": "Oscar", "$options": "i"}
-
 
         # Apply limit
         cursor = database["movies"].find(query).limit(size)

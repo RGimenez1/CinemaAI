@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import HTTPException
-from app.models.movie import Movie
-from app.repositories.movie_repository import get_movies_from_db
+from app.domain.models.movie import Movie
+from app.infrastructure.repositories.movie_repository import get_movies_from_db
 
 
 async def search_movies(
