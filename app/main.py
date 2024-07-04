@@ -13,10 +13,10 @@ from app.api.tool_caller import router as tool_caller_router
 
 # Initialize the FastAPI application
 app = FastAPI()
-app.servers = [
-    {"url": "http://localhost:8000", "description": "API Server"},
-    # Add more servers as needed
-]
+# app.servers = [
+#     {"url": "http://localhost:8000", "description": "API Server"},
+#     # Add more servers as needed
+# ]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
