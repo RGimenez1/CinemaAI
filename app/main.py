@@ -33,12 +33,6 @@ app.include_router(cinema_router, prefix="/api")
 app.include_router(tool_caller_router, prefix="/api")
 
 
-# Redirect root URL to /docs
-@app.get("/", include_in_schema=False)
-async def root():
-    return RedirectResponse(url="/docs")
-
-
 # Setup the templates directory
 templates = Jinja2Templates(directory="app/templates")
 
@@ -81,3 +75,9 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
         status_code=422,
         content=ErrorResponse(message="Validation Error", errors=exc.errors()).dict(),
     )
+
+
+# Redirect root URL to /docs
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/docs")
