@@ -3,17 +3,22 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from app.api.movies import router as movie_router
-from app.api.chat import router as chat_router
-from app.api.system_prompts import router as prompts_router
 from pydantic import BaseModel, ValidationError
 import logging
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from app.api.movies import router as movie_router
+from app.api.chat import router as chat_router
+from app.api.system_prompts import router as prompts_router
+from app.api.cinema import router as cinema_router
+from app.api.tool_caller import router as tool_caller_router
 
 # Initialize the FastAPI application
 app = FastAPI()
+app.servers = [
+    {"url": "http://localhost:8000", "description": "API Server"},
+    # Add more servers as needed
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
@@ -26,6 +31,8 @@ app.add_middleware(
 app.include_router(movie_router, prefix="/api")
 app.include_router(chat_router, prefix="/api")
 app.include_router(prompts_router, prefix="/api")
+app.include_router(cinema_router, prefix="/api")
+app.include_router(tool_caller_router, prefix="/api")
 
 app.mount(
     "/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static"
