@@ -4,8 +4,14 @@ from app.core.config import settings
 
 class MongoDB:
     def __init__(self, uri: str, db_name: str):
-        self.client = AsyncIOMotorClient(uri)
-        self.database = self.client[db_name]
+        self.client = None
+        self.uri = uri
+        self.db_name = db_name
+        self.database = None
+
+    async def connect(self):
+        self.client = AsyncIOMotorClient(self.uri)
+        self.database = self.client[self.db_name]
 
     async def close(self):
         self.client.close()
@@ -16,7 +22,7 @@ mongo_db = MongoDB(settings.MONGO_URI, settings.MONGO_DB_NAME)
 
 
 # Dependency to get the database instance
-def get_mongo_db():
+async def get_mongo_db():
     return mongo_db.database
 
 
