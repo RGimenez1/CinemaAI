@@ -11,25 +11,11 @@ from pathlib import Path  # Ensure this is imported correctly
 from app.api.movies import router as movie_router
 from app.api.cinema import router as cinema_router
 from app.api.tool_caller import router as tool_caller_router
-from app.infrastructure.db.mongo import mongo_db, close_mongo_db
-from contextlib import asynccontextmanager
 
-from app.infrastructure.db.mongo import close_mongo_db
 
 # Initialize the FastAPI application
 app = FastAPI()
 
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup: Initialize MongoDB
-    await mongo_db.connect()
-    yield
-    # Shutdown: Close MongoDB
-    await close_mongo_db()
-
-
-app.router.lifespan_context = lifespan
 
 # Dynamically set the servers
 app.servers = [
