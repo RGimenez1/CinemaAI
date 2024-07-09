@@ -1,7 +1,9 @@
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from typing import List, Optional
 from app.services.movie_service import search_movies
 from app.domain.models.movie import Movie
+from app.infrastructure.db.mongo import get_mongo_db
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 router = APIRouter()
 
@@ -26,6 +28,7 @@ async def read_movies(
         None, description="Filter for movies nominated for or awarded an Oscar"
     ),
     size: int = Query(10, gt=0, le=100, description="Number of movies per search"),
+    db: AsyncIOMotorDatabase = Depends(get_mongo_db),
 ):
     """
     Search for movies based on various filters. At least one filter must be provided.
@@ -48,6 +51,7 @@ async def read_movies(
         )
 
     movies = await search_movies(
+        db,
         title,
         genres,
         year,

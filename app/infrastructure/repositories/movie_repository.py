@@ -1,14 +1,12 @@
 from typing import List, Dict
 from app.domain.models.movie import Movie
-from app.core.config import settings
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorDatabase
 from app.core.utils.data_preprocess_utils import clean_data
 
-client = AsyncIOMotorClient(settings.MONGO_URI)
-database = client[settings.MONGO_DB_NAME]
 
-
-async def get_movies_from_db(query_params: Dict, size: int) -> List[Movie]:
+async def get_movies_from_db(
+    query_params: Dict, size: int, db: AsyncIOMotorDatabase
+) -> List[Movie]:
     try:
         query = {}
 
@@ -49,7 +47,7 @@ async def get_movies_from_db(query_params: Dict, size: int) -> List[Movie]:
             query["awards.text"] = {"$regex": "Oscar", "$options": "i"}
 
         # Apply limit
-        cursor = database["movies"].find(query).limit(size)
+        cursor = db["movies"].find(query).limit(size)
         results = await cursor.to_list(length=size)
 
         # Convert MongoDB ObjectId to string, clean data, and return as Pydantic models

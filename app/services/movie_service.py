@@ -2,9 +2,11 @@ from typing import List, Optional
 from fastapi import HTTPException
 from app.domain.models.movie import Movie
 from app.infrastructure.repositories.movie_repository import get_movies_from_db
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 
 async def search_movies(
+    db: AsyncIOMotorDatabase,
     title: Optional[str],
     genres: Optional[List[str]],
     year: Optional[str],
@@ -26,11 +28,10 @@ async def search_movies(
             "countries": countries,
             "imdb_rating": imdb_rating,
             "oscars": oscars,
-            "size": size,
         }
 
         # Fetch movies using the repository layer
-        movies = await get_movies_from_db(query_params, size)
+        movies = await get_movies_from_db(query_params, size, db)
 
         if not movies:
             # Raise a 404 exception if no movies are found
