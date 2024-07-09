@@ -19,7 +19,7 @@ Base = declarative_base()
 
 
 class CinemaPreferenceCreate(BaseModel):
-    user_id: UUID
+    user_id: UUID = Field(..., example="e9fc7e46-a8a5-4fd4-8ba7-af485013e6fa")
     title: str
     year: int
     type: Literal["movie", "series"]

@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.infrastructure.db.session import get_session
-from app.domain.models.cinema import CinemaPreference
-from app.infrastructure.repositories.cinema_repository import CinemaRepository
+from app.services.cinema_service import CinemaService
 from app.domain.models.cinema import CinemaPreferenceCreate
 from typing import List
 from uuid import UUID
@@ -14,14 +13,13 @@ router = APIRouter()
     "/cinema_preferences",
     response_model=CinemaPreferenceCreate,
     summary="Posts a new entry to cinema preferences by user id",
-    description="Add movie or serie to user cinema preferences",
+    description="Add movie or series to user cinema preferences",
 )
 async def create_cinema_preference(
     preference: CinemaPreferenceCreate, session: AsyncSession = Depends(get_session)
 ):
-    cinema_repository = CinemaRepository(session)
-    preference = CinemaPreference(**preference.model_dump())
-    return await cinema_repository.add_preference(preference)
+    cinema_service = CinemaService(session)
+    return await cinema_service.create_cinema_preference(preference)
 
 
 @router.get(
@@ -33,5 +31,5 @@ async def create_cinema_preference(
 async def get_cinema_preferences(
     user_id: UUID, session: AsyncSession = Depends(get_session)
 ):
-    cinema_repository = CinemaRepository(session)
-    return await cinema_repository.get_preferences_by_user_id(user_id)
+    cinema_service = CinemaService(session)
+    return await cinema_service.get_cinema_preferences(user_id)
